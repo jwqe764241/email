@@ -2,8 +2,11 @@
 
 #include <iostream>
 #include <string>
+#include <memory>
+#include <unordered_set>
 
 #include <asio.hpp>
+#include "connection.hpp"
 
 class Server
 {
@@ -13,6 +16,7 @@ public:
 
 private:
   void handleAccept(const asio::error_code &ec);
+  void removeConnection(std::weak_ptr<Connection> connectionRef);
 
 private:
   std::string host;
@@ -20,4 +24,6 @@ private:
   asio::io_context ctx;
   asio::ip::tcp::socket listenSocket;
   asio::ip::tcp::acceptor acceptor;
+
+  std::unordered_set<std::shared_ptr<Connection>> connections;
 };

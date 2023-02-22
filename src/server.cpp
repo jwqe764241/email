@@ -23,8 +23,20 @@ void Server::start(std::string host, std::string port)
 
 void Server::handleAccept(const asio::error_code &ec)
 {
-    std::cout << "connected" << std::endl;
-    listenSocket.close();
+    auto connection = std::make_shared<Connection>(std::move(listenSocket));
+    connections.insert(connection);
+    connection->start(std::bind(&Server::removeConnection, this, std::weak_ptr<Connection>(connection)));
 
+    listenSocket.close();
     acceptor.async_accept(listenSocket, std::bind(&Server::handleAccept, this, std::placeholders::_1));
+}
+
+// Delete connection memory
+void Server::removeConnection(std::weak_ptr<Connection> connectionRef)
+{
+    std::shared_ptr<Connection> connection = connectionRef.lock();
+    if (connection != nullptr)
+    {
+        connections.erase(connection);
+    }
 }

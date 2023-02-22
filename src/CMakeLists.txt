@@ -1,4 +1,7 @@
-set(SOURCES main.cpp server.cpp)
+set(SOURCES 
+main.cpp 
+server.cpp 
+connection.cpp)
 
 set(CMAKE_CXX_STANDARD 14)
 
