@@ -1,7 +1,8 @@
 set(SOURCES 
 main.cpp 
 server.cpp 
-connection.cpp)
+connection.cpp
+request.cpp)
 
 set(CMAKE_CXX_STANDARD 14)
 
