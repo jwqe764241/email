@@ -17,6 +17,8 @@ Request::Request(std::string request)
     throw std::runtime_error("invalid request string");
   }
 
+  this->command = command;
+
   // TODO: Refactor..
   if (command == "HELO")
   {
