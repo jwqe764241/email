@@ -3,7 +3,16 @@
 const std::array<std::string, 8> Request::commandList = {
     "HELO", "MAIL", "RCPT", "DATA", "RSET", "NOOP", "VRFY"};
 
+Request::Request()
+{
+}
+
 Request::Request(std::string request)
+{
+  parse(request);
+}
+
+void Request::parse(std::string request)
 {
   size_t terminateFound = request.find("\r\n");
   if (terminateFound != std::string::npos)
@@ -38,12 +47,12 @@ Request::Request(std::string request)
   }
 }
 
-const std::string &Request::getCommand()
+const std::string &Request::getCommand() const
 {
   return command;
 }
 
-const std::vector<std::string> &Request::getParameters()
+const std::vector<std::string> &Request::getParameters() const
 {
   return parameters;
 }
@@ -60,6 +69,7 @@ void Request::parseMailParameters(std::string rawParameter)
 
   if (startFound == 0 && startFound < endFound)
   {
+    // TODO: Verify reverse-path
     parameters.push_back(
         std::string(rawParameter.begin() + startFound + 6, rawParameter.begin() + endFound));
   }
@@ -76,6 +86,7 @@ void Request::parseRcptParameters(std::string rawParameter)
 
   if (startFound == 0 && startFound < endFound)
   {
+    // TODO: Verify forward-path
     parameters.push_back(
         std::string(rawParameter.begin() + startFound + 4, rawParameter.begin() + endFound));
   }

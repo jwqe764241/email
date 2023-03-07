@@ -13,7 +13,7 @@ Connection::~Connection()
 void Connection::start(std::function<void()> &&onDisconnect)
 {
     this->onDisconnect = std::move(onDisconnect);
-    sock.write_some(asio::buffer("220 Hello\r\n"));
+    currentState = std::make_shared<IdleState>(sock, connectionData);
     asio::async_read_until(sock, buffer, "\r\n",
                            std::bind(Connection::handleRead, this, std::placeholders::_1, std::placeholders::_2));
 }
@@ -22,7 +22,20 @@ void Connection::handleRead(const asio::error_code ec, int bytesTransferred)
 {
     if (!ec)
     {
-        std::cout << std::istream(&buffer).rdbuf() << std::endl;
+        std::stringstream sstream;
+        sstream << std::istream(&buffer).rdbuf();
+        std::string rawRequest = sstream.str();
+
+        try
+        {
+            Request request(rawRequest);
+            processEvent(request);
+        }
+        catch (const std::exception &e)
+        {
+            std::cout << e.what() << std::endl;
+        }
+
         buffer.consume(bytesTransferred);
         asio::async_read_until(sock, buffer, "\r\n",
                                std::bind(Connection::handleRead, this, std::placeholders::_1, std::placeholders::_2));
@@ -38,5 +51,19 @@ void Connection::handleRead(const asio::error_code ec, int bytesTransferred)
         buffer.consume(buffer.size());
         asio::async_read_until(sock, buffer, "\r\n",
                                std::bind(Connection::handleRead, this, std::placeholders::_1, std::placeholders::_2));
+    }
+}
+
+void Connection::processEvent(const Request &request)
+{
+    if (currentState == nullptr)
+    {
+        throw std::runtime_error("current state is nullptr");
+    }
+
+    auto nextState = currentState->processEvent(request);
+    if (nextState != currentState)
+    {
+        currentState = nextState;
     }
 }

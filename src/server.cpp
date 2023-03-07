@@ -11,6 +11,7 @@ void Server::start(std::string host, std::string port)
     asio::ip::tcp::endpoint endpoint = *resolver.resolve(host, port);
 
     acceptor.open(endpoint.protocol());
+    // TODO: Add error handling when address already use
     acceptor.bind(endpoint);
     acceptor.listen(asio::socket_base::max_connections);
 

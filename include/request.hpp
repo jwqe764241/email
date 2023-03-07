@@ -10,10 +10,12 @@
 class Request
 {
 public:
+  Request();
   Request(std::string request);
 
-  const std::string &getCommand();
-  const std::vector<std::string> &getParameters();
+  void parse(std::string request);
+  const std::string &getCommand() const;
+  const std::vector<std::string> &getParameters() const;
 
 private:
   void parseHeloParameters(std::string rawParameter);
