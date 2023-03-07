@@ -5,5 +5,5 @@
 class Data
 {
 public:
-  std::string domain;
+    std::string domain;
 };
