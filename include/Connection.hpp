@@ -13,8 +13,6 @@
 #include "Request.hpp"
 #include "State.hpp"
 
-const int BUFFER_SIZE = 1024;
-
 class Connection
 {
 public:
