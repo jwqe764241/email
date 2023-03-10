@@ -1,6 +1,6 @@
 #include "State.hpp"
 
-IdleState::IdleState(asio::ip::tcp::socket &sock, Data &connectionData)
+IdleState::IdleState(asio::ip::tcp::socket &sock, ConnectionData &connectionData)
     : sock(sock), connectionData(connectionData)
 {
     eventMap.emplace("HELO", [&](const Request &request) {

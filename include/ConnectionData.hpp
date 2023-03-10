@@ -2,7 +2,7 @@
 
 #include <string>
 
-class Data
+class ConnectionData
 {
 public:
     std::string domain;

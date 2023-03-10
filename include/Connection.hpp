@@ -9,7 +9,7 @@
 
 #include "asio.hpp"
 
-#include "Data.hpp"
+#include "ConnectionData.hpp"
 #include "Request.hpp"
 #include "State.hpp"
 
@@ -30,5 +30,5 @@ private:
     asio::streambuf buffer;
     std::function<void()> onDisconnect;
     std::shared_ptr<State> currentState;
-    Data connectionData;
+    ConnectionData connectionData;
 };

@@ -9,7 +9,7 @@
 
 #include "asio.hpp"
 
-#include "Data.hpp"
+#include "ConnectionData.hpp"
 #include "Request.hpp"
 
 class State;
@@ -24,20 +24,17 @@ public:
     virtual std::shared_ptr<State> processEvent(const Request &request) = 0;
 };
 
-class HeloState;
-class MailState;
-
 class IdleState : public State, public std::enable_shared_from_this<IdleState>
 {
 public:
-    IdleState(asio::ip::tcp::socket &sock, Data &connectionData);
+    IdleState(asio::ip::tcp::socket &sock, ConnectionData &connectionData);
     std::shared_ptr<State> processEvent(const Request &request);
     std::shared_ptr<IdleState> getPtr();
 
 private:
     EventProcessorMap eventMap;
     asio::ip::tcp::socket &sock;
-    Data &connectionData;
+    ConnectionData &connectionData;
 };
 
 class HeloState : public State, public std::enable_shared_from_this<HeloState>
