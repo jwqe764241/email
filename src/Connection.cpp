@@ -13,11 +13,26 @@ Connection::~Connection()
 void Connection::start(std::function<void()> &&onDisconnect)
 {
     this->onDisconnect = std::move(onDisconnect);
-    currentState = std::make_shared<IdleState>(sock, connectionData);
+    currentState = std::make_shared<IdleState>(getPtr());
     asio::async_read_until(sock, buffer, "\r\n",
                            std::bind(Connection::handleRead, this,
                                      std::placeholders::_1,
                                      std::placeholders::_2));
+}
+
+std::shared_ptr<Connection> Connection::getPtr()
+{
+    return shared_from_this();
+}
+
+asio::ip::tcp::socket& Connection::getSocket()
+{
+    return sock;
+}
+
+void Connection::setDomain(const std::string& domain)
+{
+    this->domain = domain;
 }
 
 void Connection::handleRead(const asio::error_code ec, int bytesTransferred)
@@ -35,7 +50,7 @@ void Connection::handleRead(const asio::error_code ec, int bytesTransferred)
         }
         catch (const std::exception &e)
         {
-            std::cout << e.what() << std::endl;
+            sock.write_some(asio::buffer("500 Syntax error or Command unrecognized\r\n"));
         }
 
         buffer.consume(bytesTransferred);
@@ -44,19 +59,19 @@ void Connection::handleRead(const asio::error_code ec, int bytesTransferred)
                                          std::placeholders::_1,
                                          std::placeholders::_2));
     }
-    else if (ec == asio::error::eof)
+    else if (ec == asio::error::not_found)
     {
-        // This will be like self desturcting
-        onDisconnect();
+        //request size is bigger than buffer size
+        buffer.consume(buffer.size());
+        asio::async_read_until(sock, buffer, "\r\n",
+                std::bind(Connection::handleRead, this,
+                            std::placeholders::_1,
+                            std::placeholders::_2));
     }
     else
     {
-        std::cout << ec.message() << std::endl;
-        buffer.consume(buffer.size());
-        asio::async_read_until(sock, buffer, "\r\n",
-                               std::bind(Connection::handleRead, this,
-                                         std::placeholders::_1,
-                                         std::placeholders::_2));
+        // This will be like self desturcting
+        onDisconnect();
     }
 }
 

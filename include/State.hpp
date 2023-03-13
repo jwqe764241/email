@@ -9,13 +9,10 @@
 
 #include "asio.hpp"
 
-#include "ConnectionData.hpp"
+#include "Connection.hpp"
 #include "Request.hpp"
 
-class State;
-
-using EventProcessor = std::function<std::shared_ptr<State>(const Request &)>;
-using EventProcessorMap = std::unordered_map<std::string, EventProcessor>;
+class Connection;
 
 class State
 {
@@ -27,14 +24,12 @@ public:
 class IdleState : public State, public std::enable_shared_from_this<IdleState>
 {
 public:
-    IdleState(asio::ip::tcp::socket &sock, ConnectionData &connectionData);
+    IdleState(std::weak_ptr<Connection> connection);
     std::shared_ptr<State> processEvent(const Request &request);
     std::shared_ptr<IdleState> getPtr();
 
 private:
-    EventProcessorMap eventMap;
-    asio::ip::tcp::socket &sock;
-    ConnectionData &connectionData;
+    std::weak_ptr<Connection> connection;
 };
 
 class HeloState : public State, public std::enable_shared_from_this<HeloState>
@@ -43,9 +38,6 @@ public:
     HeloState();
     std::shared_ptr<State> processEvent(const Request &request);
     std::shared_ptr<HeloState> getPtr();
-
-private:
-    EventProcessorMap eventMap;
 };
 
 class MailState : public State, public std::enable_shared_from_this<MailState>
@@ -54,7 +46,4 @@ public:
     MailState();
     std::shared_ptr<State> processEvent(const Request &request);
     std::shared_ptr<MailState> getPtr();
-
-private:
-    EventProcessorMap eventMap;
 };

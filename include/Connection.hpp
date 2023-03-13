@@ -9,17 +9,21 @@
 
 #include "asio.hpp"
 
-#include "ConnectionData.hpp"
 #include "Request.hpp"
 #include "State.hpp"
 
-class Connection
+class State;
+
+class Connection : public std::enable_shared_from_this<Connection>
 {
 public:
     Connection(asio::ip::tcp::socket sock_);
     ~Connection();
 
     void start(std::function<void()> &&onDisconnect);
+    std::shared_ptr<Connection> getPtr();
+    asio::ip::tcp::socket& getSocket();
+    void setDomain(const std::string& domain);
 
 private:
     void handleRead(const asio::error_code ec, int bytesTransferred);
@@ -30,5 +34,5 @@ private:
     asio::streambuf buffer;
     std::function<void()> onDisconnect;
     std::shared_ptr<State> currentState;
-    ConnectionData connectionData;
+    std::string domain;
 };

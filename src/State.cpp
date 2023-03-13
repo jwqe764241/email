@@ -1,27 +1,36 @@
 #include "State.hpp"
 
-IdleState::IdleState(asio::ip::tcp::socket &sock, ConnectionData &connectionData)
-    : sock(sock), connectionData(connectionData)
+IdleState::IdleState(std::weak_ptr<Connection> connection)
+    : connection(connection)
 {
-    eventMap.emplace("HELO", [&](const Request &request) {
-        std::string domain = request.getParameters()[0];
-        connectionData.domain = domain;
-        return std::make_shared<HeloState>();
-    });
-    sock.write_some(asio::buffer("220 Hello\r\n"));
+    std::shared_ptr<Connection> conn = connection.lock();
+    if(conn != nullptr) {
+        asio::ip::tcp::socket& sock = conn->getSocket();
+        sock.write_some(asio::buffer("220 Hello\r\n"));
+    }
 }
 
 std::shared_ptr<State> IdleState::processEvent(const Request &request)
 {
-    auto it = eventMap.find(request.getCommand());
-    if (it != eventMap.end())
+    if(request.getCommand() == "HELO") 
     {
-        auto processor = it->second;
-        return processor(request);
+        std::string domain = request.getParameters()[0];
+        std::shared_ptr<Connection> conn = connection.lock();
+        if(conn != nullptr) {
+            conn->setDomain(domain);
+            asio::ip::tcp::socket& sock = conn->getSocket();
+            sock.write_some(asio::buffer("250 Hello " + domain + "\r\n"));
+            return std::make_shared<HeloState>();
+        }
+        else
+        {
+            //something wrong
+            return getPtr();
+        }
     }
-    else
+    else 
     {
-        std::cout << "not allowed" << std::endl;
+        //not allowed
         return getPtr();
     }
 }
@@ -33,23 +42,18 @@ std::shared_ptr<IdleState> IdleState::getPtr()
 
 HeloState::HeloState()
 {
-    eventMap.emplace("MAIL", [&](const Request &request) {
-        std::cout << "transit to MailState" << std::endl;
-        return std::make_shared<MailState>();
-    });
 }
 
 std::shared_ptr<State> HeloState::processEvent(const Request &request)
 {
-    auto it = eventMap.find(request.getCommand());
-    if (it != eventMap.end())
+    if(request.getCommand() == "MAIL")
     {
-        auto processor = it->second;
-        return processor(request);
+        std::cout << "transit to MailState" << std::endl;
+        return std::make_shared<MailState>();
     }
-    else
+    else 
     {
-        std::cout << "not allowed" << std::endl;
+        //not allowed
         return getPtr();
     }
 }
@@ -61,25 +65,11 @@ std::shared_ptr<HeloState> HeloState::getPtr()
 
 MailState::MailState()
 {
-    eventMap.emplace("HELO", [&](const Request &request) {
-        std::cout << "transit to HeloState";
-        return std::make_shared<HeloState>();
-    });
 }
 
 std::shared_ptr<State> MailState::processEvent(const Request &request)
 {
-    auto it = eventMap.find(request.getCommand());
-    if (it != eventMap.end())
-    {
-        auto processor = it->second;
-        return processor(request);
-    }
-    else
-    {
-        std::cout << "not allowed" << std::endl;
-        return getPtr();
-    }
+    return getPtr();
 }
 
 std::shared_ptr<MailState> MailState::getPtr()
