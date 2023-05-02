@@ -1,9 +1,13 @@
 set(SOURCES 
 main.cpp 
-Server.cpp 
-Connection.cpp 
-Request.cpp 
-State.cpp)
+Server/Server.cpp 
+Server/Connection.cpp 
+Server/ConnectionContext.cpp
+Smtp/SmtpParser.cpp
+Smtp/TokenReader.cpp
+Smtp/Token.cpp
+Smtp/HeloCommand.cpp
+State/StateMachine.cpp)
 
 set(CMAKE_CXX_STANDARD 14)
 
@@ -11,7 +15,10 @@ add_definitions(-DASIO_STANDALONE)
 
 add_executable(email ${SOURCES})
 
-
 if(WIN32)
   target_link_libraries(email wsock32 ws2_32)
 endif()
+
+#libraries for tests
+add_library(TokenReader STATIC Smtp/TokenReader.cpp Smtp/Token.cpp)
+add_library(SmtpParser STATIC Smtp/SmtpParser.cpp Smtp/TokenReader.cpp Smtp/Token.cpp Smtp/HeloCommand.cpp)

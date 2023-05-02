@@ -1,4 +1,4 @@
-#include "Server.hpp"
+#include "Server/Server.hpp"
 
 Server::Server()
     : listenSocket(ctx), acceptor(ctx)
@@ -35,7 +35,7 @@ void Server::handleAccept(const asio::error_code &ec)
                                                   std::placeholders::_1));
 }
 
-// Delete connection memory
+// Remove connection from list
 void Server::removeConnection(std::weak_ptr<Connection> connectionRef)
 {
     std::shared_ptr<Connection> connection = connectionRef.lock();

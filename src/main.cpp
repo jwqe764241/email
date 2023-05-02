@@ -1,11 +1,11 @@
 #include <iostream>
 
-#include "server.hpp"
+#include "Server/Server.hpp"
 
 int main(int argc, char **argv)
 {
     Server server;
-    server.start("127.0.0.1", "25");
+    server.start("192.168.0.5", "25");
 
     return 0;
 }
