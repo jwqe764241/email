@@ -7,3 +7,5 @@ include_directories(
 )
 
 add_subdirectory(src)
+add_subdirectory(lib/catch)
+add_subdirectory(test)
