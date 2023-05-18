@@ -4,9 +4,9 @@
 
 TEST_CASE("Smtp parser can parse HELO command") {
   SmtpParser parser;
-  std::unique_ptr<SmtpCommand> command = parser.parse("HELO aaa.example.com");
-  HeloCommand* p = static_cast<HeloCommand*>(command.get());
+  std::shared_ptr<SmtpCommand> parsedCommand = parser.parse("HELO aaa.example.com");
+  HeloCommand* heloCommand = static_cast<HeloCommand*>(parsedCommand.get());
 
-  REQUIRE(p->getName() == "HELO");
-  REQUIRE(p->getDomain() == "aaa.example.com");
+  REQUIRE(heloCommand->getCommandId() == SmtpCommandId::Helo);
+  REQUIRE(heloCommand->getDomain() == "aaa.example.com");
 }

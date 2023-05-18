@@ -11,6 +11,7 @@
 
 #include "ConnectionContext.hpp"
 #include "Smtp/SmtpParser.hpp"
+#include "State/StateMachine.hpp"
 
 class Connection : public std::enable_shared_from_this<Connection>
 {
@@ -26,8 +27,10 @@ private:
     void onSendGreeting(const asio::error_code ec, int bytesTransferred);
     void readRequest();
     void onReadRequest(const asio::error_code ec, int bytesTransferred);
+    void onExecuteCommand(std::shared_ptr<SmtpCommand> command, const asio::error_code ec, int bytesTransferred);
 
 private:
     ConnectionContext context;
+    StateMachine stateMachine;
 };
 //StateMachine, StateContext

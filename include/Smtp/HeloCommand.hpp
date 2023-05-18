@@ -7,8 +7,8 @@ class HeloCommand : public SmtpCommand
 public:
   HeloCommand(const std::string& domain);
   
-  std::string getName() override;
-  void execute(ConnectionContext& context);
+  SmtpCommandId getCommandId() override;
+  void execute(ConnectionContext& context, std::function<void(const asio::error_code, int)> handler) override;
   std::string getDomain();
 
 private:

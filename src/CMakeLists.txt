@@ -7,7 +7,10 @@ Smtp/SmtpParser.cpp
 Smtp/TokenReader.cpp
 Smtp/Token.cpp
 Smtp/HeloCommand.cpp
-State/StateMachine.cpp)
+State/StateMachine.cpp
+State/StateTransition.cpp
+State/State.cpp
+State/StateTable.cpp)
 
 set(CMAKE_CXX_STANDARD 14)
 
@@ -20,5 +23,12 @@ if(WIN32)
 endif()
 
 #libraries for tests
-add_library(TokenReader STATIC Smtp/TokenReader.cpp Smtp/Token.cpp)
-add_library(SmtpParser STATIC Smtp/SmtpParser.cpp Smtp/TokenReader.cpp Smtp/Token.cpp Smtp/HeloCommand.cpp)
+add_library(TokenReader STATIC 
+  Smtp/TokenReader.cpp 
+  Smtp/Token.cpp)
+
+add_library(SmtpParser STATIC 
+  Smtp/SmtpParser.cpp 
+  Smtp/TokenReader.cpp 
+  Smtp/Token.cpp Smtp/HeloCommand.cpp
+  Server/ConnectionContext.cpp)

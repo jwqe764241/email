@@ -1,11 +1,11 @@
 #include "Smtp/SmtpParser.hpp"
 
-std::unique_ptr<SmtpCommand> SmtpParser::parse(const std::string& str)
+std::shared_ptr<SmtpCommand> SmtpParser::parse(const std::string& str)
 {
   return parseHelo(str);
 }
 
-std::unique_ptr<HeloCommand> SmtpParser::parseHelo(const std::string& str)
+std::shared_ptr<HeloCommand> SmtpParser::parseHelo(const std::string& str)
 {
   TokenReader reader(str);
 
@@ -19,7 +19,7 @@ std::unique_ptr<HeloCommand> SmtpParser::parseHelo(const std::string& str)
   std::string domain;
   bool result = reader.tryRead(std::bind(SmtpParser::tryReadDomain, this, std::placeholders::_1), &domain);
   
-  return result ? std::make_unique<HeloCommand>(domain) : nullptr;
+  return result ? std::make_shared<HeloCommand>(domain) : nullptr;
 }
 
 bool SmtpParser::tryReadDomain(TokenReader& reader) {

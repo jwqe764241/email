@@ -2,6 +2,7 @@
 
 Connection::Connection(asio::ip::tcp::socket sock)
     : context(std::move(sock))
+    , stateMachine(context)
 {
 }
 
@@ -49,46 +50,29 @@ void Connection::onReadRequest(const asio::error_code ec, int bytesTransferred)
         sstream << std::istream(&context.getBuffer()).rdbuf();
         std::string rawRequest = sstream.str();
         SmtpParser parser;
-        std::unique_ptr<SmtpCommand> command = parser.parse(rawRequest);
+        std::shared_ptr<SmtpCommand> command = parser.parse(rawRequest);
+
+        if(!command) {
+            context.getSocket().write_some(asio::buffer("500 Syntax error or Command unrecognized\r\n"));
+            readRequest();
+            return;
+        }
+
+        if (stateMachine.canAccept(command))
+        {
+            command->execute(context, std::bind(Connection::onExecuteCommand, this, 
+                command, std::placeholders::_1, std::placeholders::_2));
+        }
     }
     else
     {
         context.disconnect();
     }
-    /*
-    if (!ec)
-    {
-        std::stringstream sstream;
-        sstream << std::istream(&buffer).rdbuf();
-        std::string rawRequest = sstream.str();
+}
 
-        try
-        {
-
-        }
-        catch (const std::exception &e)
-        {
-            sock.write_some(asio::buffer("500 Syntax error or Command unrecognized\r\n"));
-        }
-
-        buffer.consume(bytesTransferred);
-        asio::async_read_until(sock, buffer, "\r\n",
-                               std::bind(Connection::handleRead, this,
-                                         std::placeholders::_1,
-                                         std::placeholders::_2));
-    }
-    else if (ec == asio::error::not_found)
-    {
-        //request size is bigger than buffer size
-        buffer.consume(buffer.size());
-        asio::async_read_until(sock, buffer, "\r\n",
-                std::bind(Connection::handleRead, this,
-                            std::placeholders::_1,
-                            std::placeholders::_2));
-    }
-    else
-    {
-        // This will be like self desturcting
-        onDisconnect();
-    */
+//TODO:: rename this method
+void Connection::onExecuteCommand(std::shared_ptr<SmtpCommand> command, const asio::error_code ec, int bytesTransferred)
+{
+    stateMachine.transition(command);
+    readRequest();
 }

@@ -5,13 +5,15 @@ HeloCommand::HeloCommand(const std::string& domain)
 {
 }
 
-std::string HeloCommand::getName()
+SmtpCommandId HeloCommand::getCommandId()
 {
-  return "HELO";
+  return SmtpCommandId::Helo;
 }
 
-void HeloCommand::execute(ConnectionContext& context)
+void HeloCommand::execute(ConnectionContext& context, std::function<void(const asio::error_code, int)> handler)
 {
+  context.setDomain(domain);
+  context.getSocket().async_write_some(asio::buffer("250 " + domain), handler);
 }
 
 std::string HeloCommand::getDomain()
