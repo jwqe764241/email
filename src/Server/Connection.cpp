@@ -24,11 +24,11 @@ std::shared_ptr<Connection> Connection::getPtr()
 void Connection::sendGreeting()
 {
     context.getSocket().async_write_some(asio::buffer("220 hello\n"), 
-        std::bind(Connection::onSendGreeting, this,
+        std::bind(Connection::handleSendGreeting, this,
             std::placeholders::_1, std::placeholders::_2));
 }
 
-void Connection::onSendGreeting(const asio::error_code ec, int bytesTransferred)
+void Connection::handleSendGreeting(const asio::error_code ec, int bytesTransferred)
 {
     if (!ec) {
         readRequest();
@@ -38,11 +38,11 @@ void Connection::onSendGreeting(const asio::error_code ec, int bytesTransferred)
 void Connection::readRequest()
 {
     asio::async_read_until(context.getSocket(), context.getBuffer(), "\n",
-        std::bind(Connection::onReadRequest, this,
+        std::bind(Connection::handleReadRequest, this,
             std::placeholders::_1, std::placeholders::_2));
 }
 
-void Connection::onReadRequest(const asio::error_code ec, int bytesTransferred)
+void Connection::handleReadRequest(const asio::error_code ec, int bytesTransferred)
 {
     if(!ec)
     {
@@ -60,7 +60,7 @@ void Connection::onReadRequest(const asio::error_code ec, int bytesTransferred)
 
         if (stateMachine.canAccept(command))
         {
-            command->execute(context, std::bind(Connection::onExecuteCommand, this, 
+            command->execute(context, std::bind(Connection::handleExecuteCommand, this, 
                 command, std::placeholders::_1, std::placeholders::_2));
         }
     }
@@ -71,7 +71,7 @@ void Connection::onReadRequest(const asio::error_code ec, int bytesTransferred)
 }
 
 //TODO:: rename this method
-void Connection::onExecuteCommand(std::shared_ptr<SmtpCommand> command, const asio::error_code ec, int bytesTransferred)
+void Connection::handleExecuteCommand(std::shared_ptr<SmtpCommand> command, const asio::error_code ec, int bytesTransferred)
 {
     stateMachine.transition(command);
     readRequest();

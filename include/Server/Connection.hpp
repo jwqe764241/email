@@ -24,10 +24,10 @@ public:
 
 private:
     void sendGreeting();
-    void onSendGreeting(const asio::error_code ec, int bytesTransferred);
+    void handleSendGreeting(const asio::error_code ec, int bytesTransferred);
     void readRequest();
-    void onReadRequest(const asio::error_code ec, int bytesTransferred);
-    void onExecuteCommand(std::shared_ptr<SmtpCommand> command, const asio::error_code ec, int bytesTransferred);
+    void handleReadRequest(const asio::error_code ec, int bytesTransferred);
+    void handleExecuteCommand(std::shared_ptr<SmtpCommand> command, const asio::error_code ec, int bytesTransferred);
 
 private:
     ConnectionContext context;
