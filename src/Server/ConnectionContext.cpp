@@ -40,14 +40,14 @@ void ConnectionContext::setDomain(const std::string& domain)
   this->domain = domain;
 }
 
-const std::string& ConnectionContext::getFrom() const
+const std::string& ConnectionContext::getOriginator() const
 {
-  return from;
+  return originator;
 }
 
-void ConnectionContext::setFrom(const std::string& from)
+void ConnectionContext::setOriginator(const std::string& originator)
 {
-  this->from = from;
+  this->originator = originator;
 }
 
 const std::vector<std::string> ConnectionContext::getTo() const
