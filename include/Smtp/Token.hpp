@@ -10,6 +10,9 @@ typedef enum class _TokenKind {
   PERIOD,
   AT,
   HYPHEN,
+  COLON,
+  LESS_THAN,
+  GREATER_THAN,
   OTHER
 } TokenKind;
 

@@ -6,6 +6,7 @@
 #include "TokenReader.hpp"
 #include "SmtpCommand.hpp"
 #include "HeloCommand.hpp"
+#include "MailCommand.hpp"
 
 class SmtpParser
 {
@@ -15,7 +16,9 @@ public:
   
 private:
   std::shared_ptr<HeloCommand> parseHelo(const std::string& str);
+  std::shared_ptr<MailCommand> parseMail(const std::string& str);
   bool tryReadDomain(TokenReader& reader);
   bool tryReadSubDomain(TokenReader& reader);
+  bool tryReadMail(TokenReader& reader);
   bool tryReadAlphanumeric(TokenReader& reader);
 }; 

@@ -98,6 +98,15 @@ Token TokenReader::readToken()
     else if(c == '-') {
         return Token(readOne(), TokenKind::HYPHEN);
     }
+    else if(c == ':') {
+        return Token(readOne(), TokenKind::COLON);
+    }
+    else if(c == '<') {
+        return Token(readOne(), TokenKind::LESS_THAN);
+    }
+    else if(c == '>') {
+        return Token(readOne(), TokenKind::GREATER_THAN);
+    }
     else {
         return Token(readOne(), TokenKind::OTHER);
     }

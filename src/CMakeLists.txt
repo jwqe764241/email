@@ -1,16 +1,17 @@
 set(SOURCES 
-main.cpp 
-Server/Server.cpp 
-Server/Connection.cpp 
-Server/ConnectionContext.cpp
-Smtp/SmtpParser.cpp
-Smtp/TokenReader.cpp
-Smtp/Token.cpp
-Smtp/HeloCommand.cpp
-State/StateMachine.cpp
-State/StateTransition.cpp
-State/State.cpp
-State/StateTable.cpp)
+  main.cpp 
+  Server/Server.cpp 
+  Server/Connection.cpp 
+  Server/ConnectionContext.cpp
+  Smtp/SmtpParser.cpp
+  Smtp/TokenReader.cpp
+  Smtp/Token.cpp
+  Smtp/HeloCommand.cpp
+  Smtp/MailCommand.cpp
+  State/StateMachine.cpp
+  State/StateTransition.cpp
+  State/State.cpp
+  State/StateTable.cpp)
 
 set(CMAKE_CXX_STANDARD 14)
 
@@ -30,5 +31,7 @@ add_library(TokenReader STATIC
 add_library(SmtpParser STATIC 
   Smtp/SmtpParser.cpp 
   Smtp/TokenReader.cpp 
-  Smtp/Token.cpp Smtp/HeloCommand.cpp
+  Smtp/Token.cpp 
+  Smtp/HeloCommand.cpp
+  Smtp/MailCommand.cpp
   Server/ConnectionContext.cpp)
