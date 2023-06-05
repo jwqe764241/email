@@ -81,34 +81,34 @@ Token TokenReader::readToken()
     char c = str.at(pointer);
 
     if (isText(c)) {
-        return Token(readWhile(isText), TokenKind::TEXT);
+        return Token(readWhile(isText), TokenKind::Text);
     }
     else if (isNumber(c)) {
-        return Token(readWhile(isNumber), TokenKind::NUMBER);
+        return Token(readWhile(isNumber), TokenKind::Number);
     }
     else if(c == ' ') {
-        return Token(readOne(), TokenKind::SPACE);
+        return Token(readOne(), TokenKind::Space);
     }
     else if(c == '.') {
-        return Token(readOne(), TokenKind::PERIOD);
+        return Token(readOne(), TokenKind::Period);
     }
     else if(c == '@') {
-        return Token(readOne(), TokenKind::AT);
+        return Token(readOne(), TokenKind::At);
     }
     else if(c == '-') {
-        return Token(readOne(), TokenKind::HYPHEN);
+        return Token(readOne(), TokenKind::Hyphen);
     }
     else if(c == ':') {
-        return Token(readOne(), TokenKind::COLON);
+        return Token(readOne(), TokenKind::Colon);
     }
     else if(c == '<') {
-        return Token(readOne(), TokenKind::LESS_THAN);
+        return Token(readOne(), TokenKind::LessThan);
     }
     else if(c == '>') {
-        return Token(readOne(), TokenKind::GREATER_THAN);
+        return Token(readOne(), TokenKind::GreaterThan);
     }
     else {
-        return Token(readOne(), TokenKind::OTHER);
+        return Token(readOne(), TokenKind::Other);
     }
 }
 

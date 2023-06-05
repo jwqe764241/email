@@ -2,19 +2,7 @@
 
 #include <string>
 
-typedef enum class _TokenKind {
-  NONE,
-  TEXT,
-  NUMBER,
-  SPACE,
-  PERIOD,
-  AT,
-  HYPHEN,
-  COLON,
-  LESS_THAN,
-  GREATER_THAN,
-  OTHER
-} TokenKind;
+#include "TokenId.hpp"
 
 class Token
 {

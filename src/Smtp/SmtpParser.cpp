@@ -26,7 +26,7 @@ std::shared_ptr<HeloCommand> SmtpParser::parseHelo(const std::string& str)
     return nullptr;
   }
 
-  reader.skip(TokenKind::SPACE);
+  reader.skip(TokenKind::Space);
 
   std::string domain;
   bool result = reader.tryRead(std::bind(SmtpParser::tryReadDomain, this, std::placeholders::_1), &domain);
@@ -43,14 +43,14 @@ std::shared_ptr<MailCommand> SmtpParser::parseMail(const std::string& str)
     return nullptr;
   }
 
-  reader.skip(TokenKind::SPACE);
+  reader.skip(TokenKind::Space);
 
-  if(reader.take().getStr() != "FROM" || reader.take().getKind() != TokenKind::COLON) {
+  if(reader.take().getStr() != "FROM" || reader.take().getKind() != TokenKind::Colon) {
     return nullptr;
   }
 
   Token lessThan = reader.take();
-  if(lessThan.getKind() != TokenKind::LESS_THAN) {
+  if(lessThan.getKind() != TokenKind::LessThan) {
     return nullptr;
   }
 
@@ -66,7 +66,7 @@ bool SmtpParser::tryReadDomain(TokenReader& reader) {
     return false;
   }
 
-  while(reader.peek().getKind() == TokenKind::PERIOD) {
+  while(reader.peek().getKind() == TokenKind::Period) {
     reader.take();
 
     if(!tryReadSubDomain(reader)) {
@@ -84,7 +84,7 @@ bool SmtpParser::tryReadSubDomain(TokenReader& reader) {
   }
   
   reader.skip([](TokenKind tokenKind){
-    return tokenKind == TokenKind::TEXT || tokenKind == TokenKind::NUMBER;
+    return tokenKind == TokenKind::Text || tokenKind == TokenKind::Number;
   });
 
   return true;
@@ -97,11 +97,11 @@ bool SmtpParser::tryReadMail(TokenReader& reader) {
   }
 
   reader.skip([](TokenKind tokenKind){
-    return tokenKind == TokenKind::TEXT || tokenKind == TokenKind::NUMBER;
+    return tokenKind == TokenKind::Text || tokenKind == TokenKind::Number;
   });
 
   //check at
-  if(reader.take().getKind() != TokenKind::AT) {
+  if(reader.take().getKind() != TokenKind::At) {
     return false;
   }
 
@@ -110,7 +110,7 @@ bool SmtpParser::tryReadMail(TokenReader& reader) {
     return false;
   }
 
-  while(reader.peek().getKind() == TokenKind::PERIOD) {
+  while(reader.peek().getKind() == TokenKind::Period) {
     reader.take();
 
     if(!tryReadSubDomain(reader)) {
@@ -124,7 +124,7 @@ bool SmtpParser::tryReadMail(TokenReader& reader) {
 bool SmtpParser::tryReadAlphanumeric(TokenReader& reader)
 {
   TokenKind tokenKind = reader.peek().getKind();
-  if(tokenKind == TokenKind::TEXT || tokenKind == TokenKind::NUMBER) {
+  if(tokenKind == TokenKind::Text || tokenKind == TokenKind::Number) {
     reader.take();
     return true;
   }

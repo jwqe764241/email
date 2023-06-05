@@ -1,7 +1,7 @@
 #include "Smtp/Token.hpp"
 
 Token::Token()
-  : str(""), tokenKind(TokenKind::NONE)
+  : str(""), tokenKind(TokenKind::None)
 {
 }
 
