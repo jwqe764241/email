@@ -1,7 +1,5 @@
 project(catch)
 
-set(Catch_Dir ${CMAKE_CURRENT_LIST_DIR})
-
 add_library(catch catch_amalgamated.hpp catch_amalgamated.cpp)
 add_library(Catch2::Catch2 ALIAS catch)
 

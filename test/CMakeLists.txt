@@ -1,8 +1,7 @@
 add_executable(TokenReaderTest TokenReaderTest.cpp)
 target_link_libraries(TokenReaderTest PRIVATE TokenReader Catch2::Catch2)
+catch_discover_tests(TokenReaderTest TEST_PREFIX TokenReaderTest_)
 
 add_executable(SmtpParserTest SmtpParserTest.cpp)
 target_link_libraries(SmtpParserTest PRIVATE SmtpParser Catch2::Catch2 wsock32 ws2_32)
-
-add_test(NAME TokenReaderTest COMMAND TokenReaderTest)
-add_test(NAME SmtpParserTest COMMAND SmtpParserTest)
+catch_discover_tests(SmtpParserTest TEST_PREFIX SmtpParserTest_)
