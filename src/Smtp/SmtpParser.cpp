@@ -29,7 +29,7 @@ std::shared_ptr<HeloCommand> SmtpParser::parseHelo(const std::string& str)
   reader.skip(TokenKind::Space);
 
   std::string domain;
-  bool result = reader.tryRead(std::bind(SmtpParser::tryReadDomain, this, std::placeholders::_1), &domain);
+  bool result = reader.tryRead(std::bind(&SmtpParser::tryReadDomain, this, std::placeholders::_1), &domain);
   
   return result ? std::make_shared<HeloCommand>(domain) : nullptr;
 }
@@ -55,7 +55,7 @@ std::shared_ptr<MailCommand> SmtpParser::parseMail(const std::string& str)
   }
 
   std::string originator;
-  bool result = reader.tryRead(std::bind(SmtpParser::tryReadMail, this, std::placeholders::_1), &originator);
+  bool result = reader.tryRead(std::bind(&SmtpParser::tryReadMail, this, std::placeholders::_1), &originator);
 
   return result ? std::make_shared<MailCommand>(originator) : nullptr;
 } 

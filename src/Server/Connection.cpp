@@ -24,7 +24,7 @@ std::shared_ptr<Connection> Connection::getPtr()
 void Connection::sendGreeting()
 {
     context.getSocket().async_write_some(asio::buffer("220 hello\n"), 
-        std::bind(Connection::handleSendGreeting, this,
+        std::bind(&Connection::handleSendGreeting, this,
             std::placeholders::_1, std::placeholders::_2));
 }
 
@@ -38,7 +38,7 @@ void Connection::handleSendGreeting(const asio::error_code ec, int bytesTransfer
 void Connection::readRequest()
 {
     asio::async_read_until(context.getSocket(), context.getBuffer(), "\n",
-        std::bind(Connection::handleReadRequest, this,
+        std::bind(&Connection::handleReadRequest, this,
             std::placeholders::_1, std::placeholders::_2));
 }
 
@@ -60,7 +60,7 @@ void Connection::handleReadRequest(const asio::error_code ec, int bytesTransferr
 
         if (stateMachine.canAccept(command))
         {
-            command->execute(context, std::bind(Connection::handleExecuteCommand, this, 
+            command->execute(context, std::bind(&Connection::handleExecuteCommand, this, 
                 command, std::placeholders::_1, std::placeholders::_2));
         }
     }
