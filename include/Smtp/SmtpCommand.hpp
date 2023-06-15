@@ -1,15 +1,15 @@
 #pragma once
 
-#include <string>
 #include <functional>
+#include <string>
 
-#include "SmtpCommandId.hpp"
 #include "Server/ConnectionContext.hpp"
+#include "SmtpCommandId.hpp"
 
 class SmtpCommand
 {
 public:
-  virtual ~SmtpCommand() {}
-  virtual SmtpCommandId getCommandId() = 0;
-  virtual void execute(ConnectionContext& context, std::function<void(const asio::error_code, int)> handler) = 0;
+    virtual ~SmtpCommand() {}
+    virtual SmtpCommandId getCommandId() = 0;
+    virtual void execute(ConnectionContext &context, std::function<void(const asio::error_code, int)> handler) = 0;
 };

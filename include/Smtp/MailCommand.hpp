@@ -5,12 +5,12 @@
 class MailCommand : public SmtpCommand
 {
 public:
-  MailCommand(const std::string& originator);
+    MailCommand(const std::string &originator);
 
-  SmtpCommandId getCommandId() override;
-  void execute(ConnectionContext& context, std::function<void(const asio::error_code, int)> handler) override;
-  std::string getOriginator();
+    SmtpCommandId getCommandId() override;
+    void execute(ConnectionContext &context, std::function<void(const asio::error_code, int)> handler) override;
+    std::string getOriginator();
 
 private:
-  std::string originator;
+    std::string originator;
 };

@@ -1,9 +1,9 @@
 #include "Server/Server.hpp"
 
 Server::Server()
-    : listenSocket(ctx), acceptor(ctx)
-{
-}
+    : listenSocket(ctx)
+    , acceptor(ctx)
+{}
 
 void Server::start(std::string host, std::string port)
 {
@@ -15,8 +15,7 @@ void Server::start(std::string host, std::string port)
     acceptor.bind(endpoint);
     acceptor.listen(asio::socket_base::max_connections);
 
-    acceptor.async_accept(listenSocket, std::bind(&Server::handleAccept, this,
-                                                  std::placeholders::_1));
+    acceptor.async_accept(listenSocket, std::bind(&Server::handleAccept, this, std::placeholders::_1));
 
     std::cout << "server started" << std::endl;
 
@@ -27,12 +26,10 @@ void Server::handleAccept(const asio::error_code &ec)
 {
     auto connection = std::make_shared<Connection>(std::move(listenSocket));
     connections.insert(connection);
-    connection->start(std::bind(&Server::removeConnection, this,
-                                std::weak_ptr<Connection>(connection)));
+    connection->start(std::bind(&Server::removeConnection, this, std::weak_ptr<Connection>(connection)));
 
     listenSocket.close();
-    acceptor.async_accept(listenSocket, std::bind(&Server::handleAccept, this,
-                                                  std::placeholders::_1));
+    acceptor.async_accept(listenSocket, std::bind(&Server::handleAccept, this, std::placeholders::_1));
 }
 
 // Remove connection from list

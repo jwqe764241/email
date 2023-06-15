@@ -1,61 +1,60 @@
 #include "Server/ConnectionContext.hpp"
 
 ConnectionContext::ConnectionContext(asio::ip::tcp::socket sock)
-  : sock(std::move(sock))
-{
-}
+    : sock(std::move(sock))
+{}
 
 ConnectionContext::~ConnectionContext()
 {
-  sock.close();
+    sock.close();
 }
 
-asio::ip::tcp::socket& ConnectionContext::getSocket()
+asio::ip::tcp::socket &ConnectionContext::getSocket()
 {
-  return sock;
+    return sock;
 }
 
-asio::streambuf& ConnectionContext::getBuffer()
+asio::streambuf &ConnectionContext::getBuffer()
 {
-  return buffer;
+    return buffer;
 }
 
 void ConnectionContext::setOnDisconnect(std::function<void()> onDisconnect)
 {
-  this->onDisconnect = onDisconnect;
+    this->onDisconnect = onDisconnect;
 }
 
 void ConnectionContext::disconnect()
 {
-  onDisconnect();
+    onDisconnect();
 }
 
-const std::string& ConnectionContext::getDomain() const
+const std::string &ConnectionContext::getDomain() const
 {
-  return domain;
+    return domain;
 }
 
-void ConnectionContext::setDomain(const std::string& domain)
+void ConnectionContext::setDomain(const std::string &domain)
 {
-  this->domain = domain;
+    this->domain = domain;
 }
 
-const std::string& ConnectionContext::getOriginator() const
+const std::string &ConnectionContext::getOriginator() const
 {
-  return originator;
+    return originator;
 }
 
-void ConnectionContext::setOriginator(const std::string& originator)
+void ConnectionContext::setOriginator(const std::string &originator)
 {
-  this->originator = originator;
+    this->originator = originator;
 }
 
 const std::vector<std::string> ConnectionContext::getTo() const
 {
-  return to;
+    return to;
 }
 
-void ConnectionContext::addTo(const std::string& to)
+void ConnectionContext::addTo(const std::string &to)
 {
-  this->to.push_back(to);
+    this->to.push_back(to);
 }

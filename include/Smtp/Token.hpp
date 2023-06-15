@@ -7,13 +7,13 @@
 class Token
 {
 public:
-  Token();
-  Token(std::string str, TokenKind tokenKind);
+    Token();
+    Token(std::string str, TokenKind tokenKind);
 
-  const std::string& getStr() const;
-  TokenKind getKind() const;
+    const std::string &getStr() const;
+    TokenKind getKind() const;
 
 private:
-  std::string str;
-  TokenKind tokenKind;
+    std::string str;
+    TokenKind tokenKind;
 };

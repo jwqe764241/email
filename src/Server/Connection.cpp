@@ -3,12 +3,9 @@
 Connection::Connection(asio::ip::tcp::socket sock)
     : context(std::move(sock))
     , stateMachine(context)
-{
-}
+{}
 
-Connection::~Connection()
-{
-}
+Connection::~Connection() {}
 
 void Connection::start(std::function<void()> onDisconnect)
 {
@@ -23,28 +20,29 @@ std::shared_ptr<Connection> Connection::getPtr()
 
 void Connection::sendGreeting()
 {
-    context.getSocket().async_write_some(asio::buffer("220 hello\n"), 
-        std::bind(&Connection::handleSendGreeting, this,
-            std::placeholders::_1, std::placeholders::_2));
+    context.getSocket().async_write_some(
+        asio::buffer("220 hello\n"),
+        std::bind(&Connection::handleSendGreeting, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 void Connection::handleSendGreeting(const asio::error_code ec, int bytesTransferred)
 {
-    if (!ec) {
+    if (!ec)
+    {
         readRequest();
     }
 }
 
 void Connection::readRequest()
 {
-    asio::async_read_until(context.getSocket(), context.getBuffer(), "\n",
-        std::bind(&Connection::handleReadRequest, this,
-            std::placeholders::_1, std::placeholders::_2));
+    asio::async_read_until(
+        context.getSocket(), context.getBuffer(), "\n",
+        std::bind(&Connection::handleReadRequest, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 void Connection::handleReadRequest(const asio::error_code ec, int bytesTransferred)
 {
-    if(!ec)
+    if (!ec)
     {
         std::stringstream sstream;
         sstream << std::istream(&context.getBuffer()).rdbuf();
@@ -52,7 +50,8 @@ void Connection::handleReadRequest(const asio::error_code ec, int bytesTransferr
         SmtpParser parser;
         std::shared_ptr<SmtpCommand> command = parser.parse(rawRequest);
 
-        if(!command) {
+        if (!command)
+        {
             context.getSocket().write_some(asio::buffer("500 Syntax error or Command unrecognized\r\n"));
             readRequest();
             return;
@@ -60,8 +59,8 @@ void Connection::handleReadRequest(const asio::error_code ec, int bytesTransferr
 
         if (stateMachine.canAccept(command))
         {
-            command->execute(context, std::bind(&Connection::handleExecuteCommand, this, 
-                command, std::placeholders::_1, std::placeholders::_2));
+            command->execute(context, std::bind(&Connection::handleExecuteCommand, this, command, std::placeholders::_1,
+                                                std::placeholders::_2));
         }
     }
     else
@@ -70,8 +69,9 @@ void Connection::handleReadRequest(const asio::error_code ec, int bytesTransferr
     }
 }
 
-//TODO:: rename this method
-void Connection::handleExecuteCommand(std::shared_ptr<SmtpCommand> command, const asio::error_code ec, int bytesTransferred)
+// TODO:: rename this method
+void Connection::handleExecuteCommand(std::shared_ptr<SmtpCommand> command, const asio::error_code ec,
+                                      int bytesTransferred)
 {
     stateMachine.transition(command);
     readRequest();

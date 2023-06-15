@@ -1,20 +1,20 @@
 #pragma once
 
-#include <functional>
 #include <cassert>
+#include <functional>
 
 #include "StateId.hpp"
 
 class StateTransition
 {
 public:
-  StateTransition();
-  StateTransition(std::function<bool()> canTransitionDelegate, std::function<StateId()> transitionDelegate);
+    StateTransition();
+    StateTransition(std::function<bool()> canTransitionDelegate, std::function<StateId()> transitionDelegate);
 
-  bool canTransition() const;
-  StateId transition() const;
+    bool canTransition() const;
+    StateId transition() const;
 
 private:
-  std::function<bool()> canTransitionDelegate;
-  std::function<StateId()> transitionDelegate;
+    std::function<bool()> canTransitionDelegate;
+    std::function<StateId()> transitionDelegate;
 };

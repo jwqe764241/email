@@ -1,26 +1,26 @@
 #pragma once
 
+#include <cassert>
+#include <initializer_list>
 #include <map>
 #include <string>
-#include <initializer_list>
 #include <utility>
-#include <cassert>
 
+#include "Smtp/SmtpCommandId.hpp"
 #include "StateId.hpp"
 #include "StateTransition.hpp"
-#include "Smtp/SmtpCommandId.hpp"
 
 class State
 {
 public:
-  State();
-  State(StateId stateId, std::initializer_list<std::pair<SmtpCommandId, StateTransition>> transitions);
-  State(const State& rhs);
+    State();
+    State(StateId stateId, std::initializer_list<std::pair<SmtpCommandId, StateTransition>> transitions);
+    State(const State &rhs);
 
-  StateId getStateId() const;
-  StateTransition& getTransition(SmtpCommandId smtpCommandId);
+    StateId getStateId() const;
+    StateTransition &getTransition(SmtpCommandId smtpCommandId);
 
 private:
-  StateId stateId;
-  std::map<SmtpCommandId, StateTransition> transitionMap;
+    StateId stateId;
+    std::map<SmtpCommandId, StateTransition> transitionMap;
 };

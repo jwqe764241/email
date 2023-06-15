@@ -2,8 +2,10 @@
 
 #include "Smtp/TokenReader.hpp"
 
-TEST_CASE("Token reader can tokenize string") {
-    SECTION("Tokenize string 1") {
+TEST_CASE("Token reader can tokenize string")
+{
+    SECTION("Tokenize string 1")
+    {
         TokenReader reader("ABC-123.456-DEF");
 
         Token token1 = reader.take();
@@ -30,7 +32,8 @@ TEST_CASE("Token reader can tokenize string") {
         REQUIRE(token7.getStr() == "DEF");
     }
 
-    SECTION("Tokenize string 2") {
+    SECTION("Tokenize string 2")
+    {
         TokenReader reader("example123@example.com");
 
         Token token1 = reader.take();
@@ -55,45 +58,52 @@ TEST_CASE("Token reader can tokenize string") {
     }
 }
 
-TEST_CASE("Token reader can read while predicate return true") {
+TEST_CASE("Token reader can read while predicate return true")
+{
     TokenReader reader("example@example.com");
     std::string result;
 
-    SECTION("Try read text") {
-        reader.tryRead([](TokenReader& reader){
-            reader.skip([](TokenKind kind){
-                return kind == TokenKind::Text;
-            });
-            return true;
-        }, &result);
+    SECTION("Try read text")
+    {
+        reader.tryRead(
+            [](TokenReader &reader) {
+                reader.skip([](TokenKind kind) { return kind == TokenKind::Text; });
+                return true;
+            },
+            &result);
 
         REQUIRE(result == "example");
     }
 
-    SECTION("Try read text and at") {
-        reader.tryRead([](TokenReader& reader){
-            reader.skip([](TokenKind kind){
-                return kind == TokenKind::Text || kind == TokenKind::At;
-            });
-            return true;
-        }, &result);
+    SECTION("Try read text and at")
+    {
+        reader.tryRead(
+            [](TokenReader &reader) {
+                reader.skip([](TokenKind kind) { return kind == TokenKind::Text || kind == TokenKind::At; });
+                return true;
+            },
+            &result);
 
         REQUIRE(result == "example@example");
     }
 
-    SECTION("Try read all") {
-        reader.tryRead([](TokenReader& reader){
-            reader.skip([](TokenKind kind){
-                return kind == TokenKind::Text || kind == TokenKind::At || kind == TokenKind::Period;
-            });
-            return true;
-        }, &result);
+    SECTION("Try read all")
+    {
+        reader.tryRead(
+            [](TokenReader &reader) {
+                reader.skip([](TokenKind kind) {
+                    return kind == TokenKind::Text || kind == TokenKind::At || kind == TokenKind::Period;
+                });
+                return true;
+            },
+            &result);
 
         REQUIRE(result == "example@example.com");
     }
 }
 
-TEST_CASE("Token reader can peek next token") {
+TEST_CASE("Token reader can peek next token")
+{
     TokenReader reader("AAA BBB");
 
     Token peek1 = reader.peek();
@@ -115,19 +125,20 @@ TEST_CASE("Token reader can peek next token") {
     REQUIRE(peek3.getStr() == take3.getStr());
 }
 
-TEST_CASE("Token reader can skip tokens with token kind and predicate") {
+TEST_CASE("Token reader can skip tokens with token kind and predicate")
+{
     TokenReader reader("AAA 123");
 
-    SECTION("Skip token with kind") {
+    SECTION("Skip token with kind")
+    {
         reader.skip(TokenKind::Text);
         REQUIRE(reader.peek().getKind() == TokenKind::Space);
         REQUIRE(reader.peek().getStr() == " ");
     }
 
-    SECTION("Skip token with predicate") {
-        reader.skip([](TokenKind kind){
-            return kind == TokenKind::Text || kind == TokenKind::Space;
-        });
+    SECTION("Skip token with predicate")
+    {
+        reader.skip([](TokenKind kind) { return kind == TokenKind::Text || kind == TokenKind::Space; });
         REQUIRE(reader.peek().getKind() == TokenKind::Number);
         REQUIRE(reader.peek().getStr() == "123");
     }

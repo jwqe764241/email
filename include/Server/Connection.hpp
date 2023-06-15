@@ -33,4 +33,4 @@ private:
     ConnectionContext context;
     StateMachine stateMachine;
 };
-//StateMachine, StateContext
+// StateMachine, StateContext
