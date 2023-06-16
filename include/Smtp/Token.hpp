@@ -10,7 +10,7 @@ public:
     Token();
     Token(std::string str, TokenKind tokenKind);
 
-    const std::string &getStr() const;
+    const std::string& getStr() const;
     TokenKind getKind() const;
 
 private:

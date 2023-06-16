@@ -16,7 +16,7 @@ public:
     void start(std::string host, std::string port);
 
 private:
-    void handleAccept(const asio::error_code &ec);
+    void handleAccept(const asio::error_code& ec);
     void removeConnection(std::weak_ptr<Connection> connectionRef);
 
 private:

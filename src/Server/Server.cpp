@@ -22,7 +22,7 @@ void Server::start(std::string host, std::string port)
     ctx.run();
 }
 
-void Server::handleAccept(const asio::error_code &ec)
+void Server::handleAccept(const asio::error_code& ec)
 {
     auto connection = std::make_shared<Connection>(std::move(listenSocket));
     connections.insert(connection);

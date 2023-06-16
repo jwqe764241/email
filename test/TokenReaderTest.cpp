@@ -66,7 +66,7 @@ TEST_CASE("Token reader can read while predicate return true")
     SECTION("Try read text")
     {
         reader.tryRead(
-            [](TokenReader &reader) {
+            [](TokenReader& reader) {
                 reader.skip([](TokenKind kind) { return kind == TokenKind::Text; });
                 return true;
             },
@@ -78,7 +78,7 @@ TEST_CASE("Token reader can read while predicate return true")
     SECTION("Try read text and at")
     {
         reader.tryRead(
-            [](TokenReader &reader) {
+            [](TokenReader& reader) {
                 reader.skip([](TokenKind kind) { return kind == TokenKind::Text || kind == TokenKind::At; });
                 return true;
             },
@@ -90,7 +90,7 @@ TEST_CASE("Token reader can read while predicate return true")
     SECTION("Try read all")
     {
         reader.tryRead(
-            [](TokenReader &reader) {
+            [](TokenReader& reader) {
                 reader.skip([](TokenKind kind) {
                     return kind == TokenKind::Text || kind == TokenKind::At || kind == TokenKind::Period;
                 });

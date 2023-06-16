@@ -11,13 +11,13 @@
 class StateMachine
 {
 public:
-    StateMachine(ConnectionContext &context);
+    StateMachine(ConnectionContext& context);
 
     bool canAccept(std::shared_ptr<SmtpCommand> command);
     void transition(std::shared_ptr<SmtpCommand> command);
 
 private:
     StateId stateId;
-    ConnectionContext &context;
+    ConnectionContext& context;
     StateTable stateTable;
 };

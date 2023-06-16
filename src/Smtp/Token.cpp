@@ -10,7 +10,7 @@ Token::Token(std::string str, TokenKind tokenKind)
     , tokenKind(tokenKind)
 {}
 
-const std::string &Token::getStr() const
+const std::string& Token::getStr() const
 {
     return str;
 }

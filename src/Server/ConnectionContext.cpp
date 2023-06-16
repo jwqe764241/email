@@ -9,12 +9,12 @@ ConnectionContext::~ConnectionContext()
     sock.close();
 }
 
-asio::ip::tcp::socket &ConnectionContext::getSocket()
+asio::ip::tcp::socket& ConnectionContext::getSocket()
 {
     return sock;
 }
 
-asio::streambuf &ConnectionContext::getBuffer()
+asio::streambuf& ConnectionContext::getBuffer()
 {
     return buffer;
 }
@@ -29,22 +29,22 @@ void ConnectionContext::disconnect()
     onDisconnect();
 }
 
-const std::string &ConnectionContext::getDomain() const
+const std::string& ConnectionContext::getDomain() const
 {
     return domain;
 }
 
-void ConnectionContext::setDomain(const std::string &domain)
+void ConnectionContext::setDomain(const std::string& domain)
 {
     this->domain = domain;
 }
 
-const std::string &ConnectionContext::getOriginator() const
+const std::string& ConnectionContext::getOriginator() const
 {
     return originator;
 }
 
-void ConnectionContext::setOriginator(const std::string &originator)
+void ConnectionContext::setOriginator(const std::string& originator)
 {
     this->originator = originator;
 }
@@ -54,7 +54,7 @@ const std::vector<std::string> ConnectionContext::getTo() const
     return to;
 }
 
-void ConnectionContext::addTo(const std::string &to)
+void ConnectionContext::addTo(const std::string& to)
 {
     this->to.push_back(to);
 }

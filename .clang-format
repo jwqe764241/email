@@ -15,3 +15,4 @@ BraceWrapping:
 AlignAfterOpenBracket: Align
 BracedInitializerIndentWidth: 4
 UseTab: Never
+PointerAlignment: Left

@@ -15,10 +15,10 @@ class State
 public:
     State();
     State(StateId stateId, std::initializer_list<std::pair<SmtpCommandId, StateTransition>> transitions);
-    State(const State &rhs);
+    State(const State& rhs);
 
     StateId getStateId() const;
-    StateTransition &getTransition(SmtpCommandId smtpCommandId);
+    StateTransition& getTransition(SmtpCommandId smtpCommandId);
 
 private:
     StateId stateId;

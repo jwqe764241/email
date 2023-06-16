@@ -10,7 +10,7 @@ bool isNumber(char c)
     return '0' <= c && c <= '9';
 }
 
-TokenReader::TokenReader(const std::string &str)
+TokenReader::TokenReader(const std::string& str)
     : str(str)
     , pointer(0)
     , hasPeeked(false)
@@ -60,7 +60,7 @@ void TokenReader::skip(std::function<bool(TokenKind)> predicate)
     }
 }
 
-bool TokenReader::tryRead(std::function<bool(TokenReader &)> predicate, std::string *outStr)
+bool TokenReader::tryRead(std::function<bool(TokenReader&)> predicate, std::string* outStr)
 {
     size_t prevPointer = pointer;
 

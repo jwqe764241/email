@@ -1,6 +1,6 @@
 #include "Smtp/SmtpParser.hpp"
 
-std::shared_ptr<SmtpCommand> SmtpParser::parse(const std::string &str)
+std::shared_ptr<SmtpCommand> SmtpParser::parse(const std::string& str)
 {
     std::shared_ptr<SmtpCommand> parsedCommand = nullptr;
 
@@ -19,7 +19,7 @@ std::shared_ptr<SmtpCommand> SmtpParser::parse(const std::string &str)
     return nullptr;
 }
 
-std::shared_ptr<HeloCommand> SmtpParser::parseHelo(const std::string &str)
+std::shared_ptr<HeloCommand> SmtpParser::parseHelo(const std::string& str)
 {
     TokenReader reader(str);
 
@@ -37,7 +37,7 @@ std::shared_ptr<HeloCommand> SmtpParser::parseHelo(const std::string &str)
     return result ? std::make_shared<HeloCommand>(domain) : nullptr;
 }
 
-std::shared_ptr<MailCommand> SmtpParser::parseMail(const std::string &str)
+std::shared_ptr<MailCommand> SmtpParser::parseMail(const std::string& str)
 {
     TokenReader reader(str);
 
@@ -66,7 +66,7 @@ std::shared_ptr<MailCommand> SmtpParser::parseMail(const std::string &str)
     return result ? std::make_shared<MailCommand>(originator) : nullptr;
 }
 
-bool SmtpParser::tryReadDomain(TokenReader &reader)
+bool SmtpParser::tryReadDomain(TokenReader& reader)
 {
     // read first subdomain
     if (!tryReadSubDomain(reader))
@@ -87,7 +87,7 @@ bool SmtpParser::tryReadDomain(TokenReader &reader)
     return true;
 }
 
-bool SmtpParser::tryReadSubDomain(TokenReader &reader)
+bool SmtpParser::tryReadSubDomain(TokenReader& reader)
 {
     // check first is alphanumeric
     if (tryReadAlphanumeric(reader) == false)
@@ -100,7 +100,7 @@ bool SmtpParser::tryReadSubDomain(TokenReader &reader)
     return true;
 }
 
-bool SmtpParser::tryReadMail(TokenReader &reader)
+bool SmtpParser::tryReadMail(TokenReader& reader)
 {
     // parse username
     if (tryReadAlphanumeric(reader) == false)
@@ -135,7 +135,7 @@ bool SmtpParser::tryReadMail(TokenReader &reader)
     return true;
 }
 
-bool SmtpParser::tryReadAlphanumeric(TokenReader &reader)
+bool SmtpParser::tryReadAlphanumeric(TokenReader& reader)
 {
     TokenKind tokenKind = reader.peek().getKind();
     if (tokenKind == TokenKind::Text || tokenKind == TokenKind::Number)

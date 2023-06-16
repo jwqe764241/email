@@ -8,13 +8,13 @@
 class TokenReader
 {
 public:
-    TokenReader(const std::string &str);
+    TokenReader(const std::string& str);
 
     Token peek();
     Token take();
     void skip(TokenKind tokenKind);
     void skip(std::function<bool(TokenKind)> predicate);
-    bool tryRead(std::function<bool(TokenReader &)> predicate, std::string *outStr);
+    bool tryRead(std::function<bool(TokenReader&)> predicate, std::string* outStr);
 
 private:
     Token readToken();
