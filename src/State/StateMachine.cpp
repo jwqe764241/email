@@ -9,7 +9,13 @@ StateMachine::StateMachine(ConnectionContext& context)
                 {SmtpCommandId::Ehlo, StateTransition([]() { return true; }, []() { return StateId::WaitForMail; })}}),
            State(StateId::WaitForMail,
                  {{SmtpCommandId::Mail,
-                   StateTransition([]() { return true; }, []() { return StateId::WithinTransaction; })}})})
+                   StateTransition([]() { return true; }, []() { return StateId::WithinTransaction; })}}),
+           State(StateId::WithinTransaction,
+                 {{SmtpCommandId::Rcpt,
+                   StateTransition([]() { return true; }, []() { return StateId::CanAcceptData; })}}),
+           State(StateId::CanAcceptData,
+                 {{SmtpCommandId::Rcpt,
+                   StateTransition([]() { return true; }, []() { return StateId::CanAcceptData; })}})})
 {
     stateId = StateId::Idle;
 }

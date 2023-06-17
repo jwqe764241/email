@@ -49,7 +49,7 @@ void ConnectionContext::setOriginator(const std::string& originator)
     this->originator = originator;
 }
 
-const std::vector<std::string> ConnectionContext::getTo() const
+const std::vector<std::string>& ConnectionContext::getTo() const
 {
     return to;
 }

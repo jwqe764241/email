@@ -5,6 +5,7 @@
 
 #include "HeloCommand.hpp"
 #include "MailCommand.hpp"
+#include "RcptCommand.hpp"
 #include "SmtpCommand.hpp"
 #include "TokenReader.hpp"
 
@@ -17,6 +18,7 @@ public:
 private:
     std::shared_ptr<HeloCommand> parseHelo(const std::string& str);
     std::shared_ptr<MailCommand> parseMail(const std::string& str);
+    std::shared_ptr<RcptCommand> parseRcpt(const std::string& str);
     bool tryReadDomain(TokenReader& reader);
     bool tryReadSubDomain(TokenReader& reader);
     bool tryReadMail(TokenReader& reader);

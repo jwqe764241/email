@@ -23,3 +23,14 @@ TEST_CASE("Smtp parser can parse MAIL command")
     REQUIRE(mailCommand->getCommandId() == SmtpCommandId::Mail);
     REQUIRE(mailCommand->getOriginator() == "example@example.com");
 }
+
+TEST_CASE("Smtp parser can parse RCPT command")
+{
+    SmtpParser parser;
+    std::shared_ptr<SmtpCommand> parsedCommand = parser.parse("RCPT TO:<example@example.com");
+    REQUIRE(parsedCommand != nullptr);
+
+    RcptCommand* rcptCommand = static_cast<RcptCommand*>(parsedCommand.get());
+    REQUIRE(rcptCommand->getCommandId() == SmtpCommandId::Rcpt);
+    REQUIRE(rcptCommand->getRecipient() == "example@example.com");
+}

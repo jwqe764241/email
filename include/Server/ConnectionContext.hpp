@@ -20,7 +20,7 @@ public:
     void setDomain(const std::string& domain);
     const std::string& getOriginator() const;
     void setOriginator(const std::string& originator);
-    const std::vector<std::string> getTo() const;
+    const std::vector<std::string>& getTo() const;
     void addTo(const std::string& to);
 
 private:
