@@ -12,7 +12,7 @@ SmtpCommandId MailCommand::getCommandId()
 void MailCommand::execute(ConnectionContext& context, std::function<void(const asio::error_code, int)> handler)
 {
     context.setOriginator(originator);
-    context.getSocket().async_write_some(asio::buffer("250 OK"), handler);
+    context.getSocket().async_write_some(asio::buffer("250 OK\r\n"), handler);
 }
 
 std::string MailCommand::getOriginator()
