@@ -22,6 +22,8 @@ public:
     void setOriginator(const std::string& originator);
     const std::vector<std::string>& getTo() const;
     void addTo(const std::string& to);
+    const std::string& getMessage() const;
+    void setMessage(const std::string& message);
 
 private:
     asio::ip::tcp::socket sock;
@@ -30,4 +32,5 @@ private:
     std::string domain;
     std::string originator;
     std::vector<std::string> to;
+    std::string message;
 };

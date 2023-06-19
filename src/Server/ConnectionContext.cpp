@@ -58,3 +58,13 @@ void ConnectionContext::addTo(const std::string& to)
 {
     this->to.push_back(to);
 }
+
+const std::string& ConnectionContext::getMessage() const
+{
+    return message;
+}
+
+void ConnectionContext::setMessage(const std::string& message)
+{
+    this->message = message;
+}

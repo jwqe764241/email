@@ -13,9 +13,10 @@ StateMachine::StateMachine(ConnectionContext& context)
            State(StateId::WithinTransaction,
                  {{SmtpCommandId::Rcpt,
                    StateTransition([]() { return true; }, []() { return StateId::CanAcceptData; })}}),
-           State(StateId::CanAcceptData,
-                 {{SmtpCommandId::Rcpt,
-                   StateTransition([]() { return true; }, []() { return StateId::CanAcceptData; })}})})
+           State(
+               StateId::CanAcceptData,
+               {{SmtpCommandId::Rcpt, StateTransition([]() { return true; }, []() { return StateId::CanAcceptData; })},
+                {SmtpCommandId::Data, StateTransition([]() { return true; }, []() { return StateId::Idle; })}})})
 {
     stateId = StateId::Idle;
 }

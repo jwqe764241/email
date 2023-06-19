@@ -22,6 +22,12 @@ std::shared_ptr<SmtpCommand> SmtpParser::parse(const std::string& str)
         return parsedCommand;
     }
 
+    parsedCommand = parseData(str);
+    if (parsedCommand)
+    {
+        return parsedCommand;
+    }
+
     return nullptr;
 }
 
@@ -99,6 +105,19 @@ std::shared_ptr<RcptCommand> SmtpParser::parseRcpt(const std::string& str)
     bool result = reader.tryRead(std::bind(&SmtpParser::tryReadMail, this, std::placeholders::_1), &recipient);
 
     return result ? std::make_shared<RcptCommand>(recipient) : nullptr;
+}
+
+std::shared_ptr<DataCommand> SmtpParser::parseData(const std::string& str)
+{
+    TokenReader reader(str);
+
+    Token command = reader.take();
+    if (command.getStr() != "DATA")
+    {
+        return nullptr;
+    }
+
+    return std::make_shared<DataCommand>();
 }
 
 bool SmtpParser::tryReadDomain(TokenReader& reader)

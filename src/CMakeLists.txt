@@ -9,6 +9,7 @@ set(SOURCES
   Smtp/HeloCommand.cpp
   Smtp/MailCommand.cpp
   Smtp/RcptCommand.cpp
+  Smtp/DataCommand.cpp
   State/StateMachine.cpp
   State/StateTransition.cpp
   State/State.cpp
@@ -36,4 +37,5 @@ add_library(SmtpParser STATIC
   Smtp/HeloCommand.cpp
   Smtp/MailCommand.cpp
   Smtp/RcptCommand.cpp
+  Smtp/DataCommand.cpp
   Server/ConnectionContext.cpp)
