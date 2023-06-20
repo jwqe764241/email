@@ -7,5 +7,6 @@ typedef enum class _SmtpCommandId
     Ehlo,
     Mail,
     Rcpt,
-    Data
+    Data,
+    Quit
 } SmtpCommandId;
