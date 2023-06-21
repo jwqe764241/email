@@ -2,7 +2,7 @@
 
 Connection::Connection(asio::ip::tcp::socket sock)
     : context(std::move(sock))
-    , stateMachine(context)
+    , stateMachine(context, StateTable::getInstance())
 {}
 
 Connection::~Connection() {}

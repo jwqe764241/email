@@ -2,8 +2,7 @@
 
 State::State() {}
 
-State::State(StateId stateId, std::initializer_list<std::pair<SmtpCommandId, StateTransition>> transitions)
-    : stateId(stateId)
+State::State(std::initializer_list<std::pair<SmtpCommandId, StateTransition>> transitions)
 {
     transitionMap.insert(transitions.begin(), transitions.end());
 }
@@ -11,13 +10,7 @@ State::State(StateId stateId, std::initializer_list<std::pair<SmtpCommandId, Sta
 State::State(const State& rhs)
 {
     assert(this != &rhs);
-    stateId = rhs.stateId;
     transitionMap = rhs.transitionMap;
-}
-
-StateId State::getStateId() const
-{
-    return stateId;
 }
 
 StateTransition& State::getTransition(SmtpCommandId smtpCommandId)

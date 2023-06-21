@@ -7,5 +7,5 @@ SmtpCommandId QuitCommand::getCommandId()
 
 void QuitCommand::execute(ConnectionContext& context, std::function<void(const asio::error_code, int)> handler)
 {
-    context.getSocket().close();
+    context.disconnect();
 }

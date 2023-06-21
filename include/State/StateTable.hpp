@@ -11,9 +11,12 @@
 class StateTable
 {
 public:
-    StateTable(std::initializer_list<State> states);
+    StateTable(){};
+    StateTable(std::initializer_list<std::pair<StateId, State>>);
 
     State& getState(StateId stateId);
+
+    static StateTable& getInstance();
 
 private:
     std::map<StateId, State> stateMap;

@@ -10,6 +10,7 @@ class StateTransition
 public:
     StateTransition();
     StateTransition(std::function<bool()> canTransitionDelegate, std::function<StateId()> transitionDelegate);
+    StateTransition(std::function<StateId()> transitionDelegate);
 
     bool canTransition() const;
     StateId transition() const;

@@ -8,6 +8,10 @@ StateTransition::StateTransition(std::function<bool()> canTransitionDelegate,
     , transitionDelegate(transitionDelegate)
 {}
 
+StateTransition::StateTransition(std::function<StateId()> transitionDelegate)
+    : StateTransition([]() { return true; }, transitionDelegate)
+{}
+
 bool StateTransition::canTransition() const
 {
     assert(canTransitionDelegate);
