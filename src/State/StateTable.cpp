@@ -18,18 +18,22 @@ StateTable& StateTable::getInstance()
     static StateTable stateTable(
         {{StateId::Idle,
           {{SmtpCommandId::Quit, StateTransition([]() { return StateId::Idle; })},
+           {SmtpCommandId::Noop, StateTransition([]() { return StateId::Idle; })},
            {SmtpCommandId::Helo, StateTransition([]() { return StateId::WaitForMail; })},
            {SmtpCommandId::Ehlo, StateTransition([]() { return StateId::WaitForMail; })}}},
          {StateId::WaitForMail,
-          {{SmtpCommandId::Quit, StateTransition([]() { return StateId::Idle; })},
+          {{SmtpCommandId::Quit, StateTransition([]() { return StateId::WaitForMail; })},
+           {SmtpCommandId::Noop, StateTransition([]() { return StateId::WaitForMail; })},
            {SmtpCommandId::Mail, StateTransition([]() { return StateId::WithinTransaction; })}}},
          {StateId::WithinTransaction,
-          {{SmtpCommandId::Quit, StateTransition([]() { return StateId::Idle; })},
+          {{SmtpCommandId::Quit, StateTransition([]() { return StateId::WithinTransaction; })},
+           {SmtpCommandId::Noop, StateTransition([]() { return StateId::WithinTransaction; })},
            {SmtpCommandId::Rcpt, StateTransition([]() { return StateId::CanAcceptData; })}}},
          {StateId::CanAcceptData,
-          {{SmtpCommandId::Quit, StateTransition([]() { return StateId::Idle; })},
-           {SmtpCommandId::Rcpt, StateTransition([]() { return true; }, []() { return StateId::CanAcceptData; })},
-           {SmtpCommandId::Data, StateTransition([]() { return true; }, []() { return StateId::Idle; })}}}});
+          {{SmtpCommandId::Quit, StateTransition([]() { return StateId::CanAcceptData; })},
+           {SmtpCommandId::Noop, StateTransition([]() { return StateId::CanAcceptData; })},
+           {SmtpCommandId::Rcpt, StateTransition([]() { return StateId::CanAcceptData; })},
+           {SmtpCommandId::Data, StateTransition([]() { return StateId::Idle; })}}}});
 
     return stateTable;
 }

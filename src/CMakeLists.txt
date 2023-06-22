@@ -11,6 +11,7 @@ set(SOURCES
   Smtp/RcptCommand.cpp
   Smtp/DataCommand.cpp
   Smtp/QuitCommand.cpp
+  Smtp/NoopCommand.cpp
   State/StateMachine.cpp
   State/StateTransition.cpp
   State/State.cpp
@@ -40,4 +41,5 @@ add_library(SmtpParser STATIC
   Smtp/RcptCommand.cpp
   Smtp/DataCommand.cpp
   Smtp/QuitCommand.cpp
+  Smtp/NoopCommand.cpp
   Server/ConnectionContext.cpp)

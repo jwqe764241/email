@@ -34,6 +34,12 @@ std::shared_ptr<SmtpCommand> SmtpParser::parse(const std::string& str)
         return parsedCommand;
     }
 
+    parsedCommand = parseNoop(str);
+    if (parsedCommand)
+    {
+        return parsedCommand;
+    }
+
     return nullptr;
 }
 
@@ -137,6 +143,19 @@ std::shared_ptr<QuitCommand> SmtpParser::parseQuit(const std::string& str)
     }
 
     return std::make_shared<QuitCommand>();
+}
+
+std::shared_ptr<NoopCommand> SmtpParser::parseNoop(const std::string& str)
+{
+    TokenReader reader(str);
+
+    Token command = reader.take();
+    if (command.getStr() != "NOOP")
+    {
+        return nullptr;
+    }
+
+    return std::make_shared<NoopCommand>();
 }
 
 bool SmtpParser::tryReadDomain(TokenReader& reader)

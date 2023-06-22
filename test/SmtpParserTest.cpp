@@ -54,3 +54,13 @@ TEST_CASE("Smtp parser can parse QUIT command")
     QuitCommand* quitCommand = static_cast<QuitCommand*>(parsedCommand.get());
     REQUIRE(quitCommand->getCommandId() == SmtpCommandId::Quit);
 }
+
+TEST_CASE("Smtp parser can parse Noop command")
+{
+    SmtpParser parser;
+    std::shared_ptr<SmtpCommand> parsedCommand = parser.parse("NOOP");
+    REQUIRE(parsedCommand != nullptr);
+
+    NoopCommand* noopCommand = static_cast<NoopCommand*>(parsedCommand.get());
+    REQUIRE(noopCommand->getCommandId() == SmtpCommandId::Noop);
+}
