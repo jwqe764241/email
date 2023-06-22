@@ -9,5 +9,6 @@ typedef enum class _SmtpCommandId
     Rcpt,
     Data,
     Quit,
-    Noop
+    Noop,
+    Rset
 } SmtpCommandId;

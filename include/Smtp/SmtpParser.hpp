@@ -9,6 +9,7 @@
 #include "NoopCommand.hpp"
 #include "QuitCommand.hpp"
 #include "RcptCommand.hpp"
+#include "RsetCommand.hpp"
 #include "SmtpCommand.hpp"
 #include "TokenReader.hpp"
 
@@ -25,6 +26,7 @@ private:
     std::shared_ptr<DataCommand> parseData(const std::string& str);
     std::shared_ptr<QuitCommand> parseQuit(const std::string& str);
     std::shared_ptr<NoopCommand> parseNoop(const std::string& str);
+    std::shared_ptr<RsetCommand> parseRset(const std::string& str);
     bool tryReadDomain(TokenReader& reader);
     bool tryReadSubDomain(TokenReader& reader);
     bool tryReadMail(TokenReader& reader);

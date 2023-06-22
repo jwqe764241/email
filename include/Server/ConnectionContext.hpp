@@ -24,6 +24,7 @@ public:
     void addTo(const std::string& to);
     const std::string& getMessage() const;
     void setMessage(const std::string& message);
+    void reset();
 
 private:
     asio::ip::tcp::socket sock;

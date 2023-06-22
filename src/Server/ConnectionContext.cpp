@@ -68,3 +68,11 @@ void ConnectionContext::setMessage(const std::string& message)
 {
     this->message = message;
 }
+
+void ConnectionContext::reset()
+{
+    domain.clear();
+    originator.clear();
+    to.clear();
+    message.clear();
+}
