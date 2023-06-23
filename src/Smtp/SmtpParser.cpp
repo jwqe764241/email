@@ -206,7 +206,9 @@ bool SmtpParser::tryReadSubDomain(TokenReader& reader)
         return false;
     }
 
-    reader.skip([](TokenKind tokenKind) { return tokenKind == TokenKind::Text || tokenKind == TokenKind::Number; });
+    reader.skip([](TokenKind tokenKind) {
+        return tokenKind == TokenKind::Text || tokenKind == TokenKind::Number || tokenKind == TokenKind::Hyphen;
+    });
 
     return true;
 }
