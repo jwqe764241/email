@@ -14,8 +14,3 @@ void HeloCommand::execute(ConnectionContext& context, std::function<void(const a
     context.setDomain(domain);
     context.getSocket().async_write_some(asio::buffer("250 " + domain + "\r\n"), handler);
 }
-
-std::string HeloCommand::getDomain()
-{
-    return domain;
-}

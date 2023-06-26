@@ -14,8 +14,3 @@ void EhloCommand::execute(ConnectionContext& context, std::function<void(const a
     context.setDomain(domain);
     context.getSocket().async_write_some(asio::buffer("502 Command not implemented\r\n"), handler);
 }
-
-std::string EhloCommand::getDomain()
-{
-    return domain;
-}

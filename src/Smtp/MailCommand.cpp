@@ -14,8 +14,3 @@ void MailCommand::execute(ConnectionContext& context, std::function<void(const a
     context.setOriginator(originator);
     context.getSocket().async_write_some(asio::buffer("250 OK\r\n"), handler);
 }
-
-std::string MailCommand::getOriginator()
-{
-    return originator;
-}
