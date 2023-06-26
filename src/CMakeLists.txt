@@ -7,6 +7,7 @@ set(SOURCES
   Smtp/TokenReader.cpp
   Smtp/Token.cpp
   Smtp/HeloCommand.cpp
+  Smtp/EhloCommand.cpp
   Smtp/MailCommand.cpp
   Smtp/RcptCommand.cpp
   Smtp/DataCommand.cpp
@@ -38,6 +39,7 @@ add_library(SmtpParser STATIC
   Smtp/TokenReader.cpp 
   Smtp/Token.cpp 
   Smtp/HeloCommand.cpp
+  Smtp/EhloCommand.cpp
   Smtp/MailCommand.cpp
   Smtp/RcptCommand.cpp
   Smtp/DataCommand.cpp

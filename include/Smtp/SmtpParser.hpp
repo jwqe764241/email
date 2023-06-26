@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "DataCommand.hpp"
+#include "EhloCommand.hpp"
 #include "HeloCommand.hpp"
 #include "MailCommand.hpp"
 #include "NoopCommand.hpp"
@@ -21,6 +22,7 @@ public:
 
 private:
     std::shared_ptr<HeloCommand> parseHelo(const std::string& str);
+    std::shared_ptr<EhloCommand> parseEhlo(const std::string& str);
     std::shared_ptr<MailCommand> parseMail(const std::string& str);
     std::shared_ptr<RcptCommand> parseRcpt(const std::string& str);
     std::shared_ptr<DataCommand> parseData(const std::string& str);

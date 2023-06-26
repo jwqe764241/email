@@ -13,6 +13,17 @@ TEST_CASE("Smtp parser can parse HELO command")
     REQUIRE(heloCommand->getDomain() == "a-a-a.e-x-ample.c-o-m");
 }
 
+TEST_CASE("Smtp parser can parse EHLO command")
+{
+    SmtpParser parser;
+    std::shared_ptr<SmtpCommand> parsedCommand = parser.parse("EHLO a-a-a.e-x-ample.c-o-m");
+    REQUIRE(parsedCommand != nullptr);
+
+    EhloCommand* ehloCommand = static_cast<EhloCommand*>(parsedCommand.get());
+    REQUIRE(ehloCommand->getCommandId() == SmtpCommandId::Ehlo);
+    REQUIRE(ehloCommand->getDomain() == "a-a-a.e-x-ample.c-o-m");
+}
+
 TEST_CASE("Smtp parser can parse MAIL command")
 {
     SmtpParser parser;

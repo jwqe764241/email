@@ -36,7 +36,7 @@ void Connection::handleSendGreeting(const asio::error_code ec, int bytesTransfer
 void Connection::readRequest()
 {
     asio::async_read_until(
-        context.getSocket(), context.getBuffer(), "\n",
+        context.getSocket(), context.getBuffer(), "\r\n",
         std::bind(&Connection::handleReadRequest, this, std::placeholders::_1, std::placeholders::_2));
 }
 

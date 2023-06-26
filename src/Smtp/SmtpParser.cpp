@@ -10,6 +10,12 @@ std::shared_ptr<SmtpCommand> SmtpParser::parse(const std::string& str)
         return parsedCommand;
     }
 
+    parsedCommand = parseEhlo(str);
+    if (parsedCommand)
+    {
+        return parsedCommand;
+    }
+
     parsedCommand = parseMail(str);
     if (parsedCommand)
     {
@@ -65,6 +71,24 @@ std::shared_ptr<HeloCommand> SmtpParser::parseHelo(const std::string& str)
     bool result = reader.tryRead(std::bind(&SmtpParser::tryReadDomain, this, std::placeholders::_1), &domain);
 
     return result ? std::make_shared<HeloCommand>(domain) : nullptr;
+}
+
+std::shared_ptr<EhloCommand> SmtpParser::parseEhlo(const std::string& str)
+{
+    TokenReader reader(str);
+
+    Token command = reader.take();
+    if (command.getStr() != "EHLO")
+    {
+        return nullptr;
+    }
+
+    reader.skip(TokenKind::Space);
+
+    std::string domain;
+    bool result = reader.tryRead(std::bind(&SmtpParser::tryReadDomain, this, std::placeholders::_1), &domain);
+
+    return result ? std::make_shared<EhloCommand>(domain) : nullptr;
 }
 
 std::shared_ptr<MailCommand> SmtpParser::parseMail(const std::string& str)
