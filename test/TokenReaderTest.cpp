@@ -17,19 +17,19 @@ TEST_CASE("Token reader can tokenize string")
         Token token7 = reader.take();
 
         REQUIRE(token1.getKind() == TokenKind::Text);
-        REQUIRE(token1.getStr() == "ABC");
+        REQUIRE(token1.getText() == "ABC");
         REQUIRE(token2.getKind() == TokenKind::Hyphen);
-        REQUIRE(token2.getStr() == "-");
+        REQUIRE(token2.getText() == "-");
         REQUIRE(token3.getKind() == TokenKind::Number);
-        REQUIRE(token3.getStr() == "123");
+        REQUIRE(token3.getText() == "123");
         REQUIRE(token4.getKind() == TokenKind::Period);
-        REQUIRE(token4.getStr() == ".");
+        REQUIRE(token4.getText() == ".");
         REQUIRE(token5.getKind() == TokenKind::Number);
-        REQUIRE(token5.getStr() == "456");
+        REQUIRE(token5.getText() == "456");
         REQUIRE(token6.getKind() == TokenKind::Hyphen);
-        REQUIRE(token6.getStr() == "-");
+        REQUIRE(token6.getText() == "-");
         REQUIRE(token7.getKind() == TokenKind::Text);
-        REQUIRE(token7.getStr() == "DEF");
+        REQUIRE(token7.getText() == "DEF");
     }
 
     SECTION("Tokenize string 2")
@@ -44,17 +44,17 @@ TEST_CASE("Token reader can tokenize string")
         Token token6 = reader.take();
 
         REQUIRE(token1.getKind() == TokenKind::Text);
-        REQUIRE(token1.getStr() == "example");
+        REQUIRE(token1.getText() == "example");
         REQUIRE(token2.getKind() == TokenKind::Number);
-        REQUIRE(token2.getStr() == "123");
+        REQUIRE(token2.getText() == "123");
         REQUIRE(token3.getKind() == TokenKind::At);
-        REQUIRE(token3.getStr() == "@");
+        REQUIRE(token3.getText() == "@");
         REQUIRE(token4.getKind() == TokenKind::Text);
-        REQUIRE(token4.getStr() == "example");
+        REQUIRE(token4.getText() == "example");
         REQUIRE(token5.getKind() == TokenKind::Period);
-        REQUIRE(token5.getStr() == ".");
+        REQUIRE(token5.getText() == ".");
         REQUIRE(token6.getKind() == TokenKind::Text);
-        REQUIRE(token6.getStr() == "com");
+        REQUIRE(token6.getText() == "com");
     }
 }
 
@@ -110,19 +110,19 @@ TEST_CASE("Token reader can peek next token")
     Token take1 = reader.take();
 
     REQUIRE(peek1.getKind() == take1.getKind());
-    REQUIRE(peek1.getStr() == take1.getStr());
+    REQUIRE(peek1.getText() == take1.getText());
 
     Token peek2 = reader.peek();
     Token take2 = reader.take();
 
     REQUIRE(peek2.getKind() == take2.getKind());
-    REQUIRE(peek2.getStr() == take2.getStr());
+    REQUIRE(peek2.getText() == take2.getText());
 
     Token peek3 = reader.peek();
     Token take3 = reader.take();
 
     REQUIRE(peek3.getKind() == take3.getKind());
-    REQUIRE(peek3.getStr() == take3.getStr());
+    REQUIRE(peek3.getText() == take3.getText());
 }
 
 TEST_CASE("Token reader can skip tokens with token kind and predicate")
@@ -133,13 +133,13 @@ TEST_CASE("Token reader can skip tokens with token kind and predicate")
     {
         reader.skip(TokenKind::Text);
         REQUIRE(reader.peek().getKind() == TokenKind::Space);
-        REQUIRE(reader.peek().getStr() == " ");
+        REQUIRE(reader.peek().getText() == " ");
     }
 
     SECTION("Skip token with predicate")
     {
         reader.skip([](TokenKind kind) { return kind == TokenKind::Text || kind == TokenKind::Space; });
         REQUIRE(reader.peek().getKind() == TokenKind::Number);
-        REQUIRE(reader.peek().getStr() == "123");
+        REQUIRE(reader.peek().getText() == "123");
     }
 }

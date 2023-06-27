@@ -60,7 +60,7 @@ std::shared_ptr<HeloCommand> SmtpParser::parseHelo(const std::string& str)
     TokenReader reader(str);
 
     Token command = reader.take();
-    if (command.getStr() != "HELO")
+    if (command.getText() != "HELO")
     {
         return nullptr;
     }
@@ -78,7 +78,7 @@ std::shared_ptr<EhloCommand> SmtpParser::parseEhlo(const std::string& str)
     TokenReader reader(str);
 
     Token command = reader.take();
-    if (command.getStr() != "EHLO")
+    if (command.getText() != "EHLO")
     {
         return nullptr;
     }
@@ -96,14 +96,14 @@ std::shared_ptr<MailCommand> SmtpParser::parseMail(const std::string& str)
     TokenReader reader(str);
 
     Token command = reader.take();
-    if (command.getStr() != "MAIL")
+    if (command.getText() != "MAIL")
     {
         return nullptr;
     }
 
     reader.skip(TokenKind::Space);
 
-    if (reader.take().getStr() != "FROM" || reader.take().getKind() != TokenKind::Colon)
+    if (reader.take().getText() != "FROM" || reader.take().getKind() != TokenKind::Colon)
     {
         return nullptr;
     }
@@ -125,14 +125,14 @@ std::shared_ptr<RcptCommand> SmtpParser::parseRcpt(const std::string& str)
     TokenReader reader(str);
 
     Token command = reader.take();
-    if (command.getStr() != "RCPT")
+    if (command.getText() != "RCPT")
     {
         return nullptr;
     }
 
     reader.skip(TokenKind::Space);
 
-    if (reader.take().getStr() != "TO" || reader.take().getKind() != TokenKind::Colon)
+    if (reader.take().getText() != "TO" || reader.take().getKind() != TokenKind::Colon)
     {
         return nullptr;
     }
@@ -154,7 +154,7 @@ std::shared_ptr<DataCommand> SmtpParser::parseData(const std::string& str)
     TokenReader reader(str);
 
     Token command = reader.take();
-    if (command.getStr() != "DATA")
+    if (command.getText() != "DATA")
     {
         return nullptr;
     }
@@ -167,7 +167,7 @@ std::shared_ptr<QuitCommand> SmtpParser::parseQuit(const std::string& str)
     TokenReader reader(str);
 
     Token command = reader.take();
-    if (command.getStr() != "QUIT")
+    if (command.getText() != "QUIT")
     {
         return nullptr;
     }
@@ -180,7 +180,7 @@ std::shared_ptr<NoopCommand> SmtpParser::parseNoop(const std::string& str)
     TokenReader reader(str);
 
     Token command = reader.take();
-    if (command.getStr() != "NOOP")
+    if (command.getText() != "NOOP")
     {
         return nullptr;
     }
@@ -193,7 +193,7 @@ std::shared_ptr<RsetCommand> SmtpParser::parseRset(const std::string& str)
     TokenReader reader(str);
 
     Token command = reader.take();
-    if (command.getStr() != "RSET")
+    if (command.getText() != "RSET")
     {
         return nullptr;
     }

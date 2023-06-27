@@ -1,21 +1,21 @@
 #include "Smtp/Token.hpp"
 
 Token::Token()
-    : str("")
-    , tokenKind(TokenKind::None)
+    : text("")
+    , kind(TokenKind::None)
 {}
 
-Token::Token(std::string str, TokenKind tokenKind)
-    : str(str)
-    , tokenKind(tokenKind)
+Token::Token(std::string text, TokenKind kind)
+    : text(text)
+    , kind(kind)
 {}
 
-const std::string& Token::getStr() const
+const std::string& Token::getText() const
 {
-    return str;
+    return text;
 }
 
 TokenKind Token::getKind() const
 {
-    return tokenKind;
+    return kind;
 }

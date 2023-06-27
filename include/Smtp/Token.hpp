@@ -2,18 +2,18 @@
 
 #include <string>
 
-#include "TokenId.hpp"
+#include "TokenKind.hpp"
 
 class Token
 {
 public:
     Token();
-    Token(std::string str, TokenKind tokenKind);
+    Token(std::string text, TokenKind kind);
 
-    const std::string& getStr() const;
+    const std::string& getText() const;
     TokenKind getKind() const;
 
 private:
-    std::string str;
-    TokenKind tokenKind;
+    std::string text;
+    TokenKind kind;
 };

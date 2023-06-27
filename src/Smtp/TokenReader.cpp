@@ -33,13 +33,13 @@ Token TokenReader::take()
     if (hasPeeked)
     {
         hasPeeked = false;
-        pointer += peeked.getStr().length();
+        pointer += peeked.getText().length();
         return peeked;
     }
     else
     {
         Token token = readToken();
-        pointer += token.getStr().length();
+        pointer += token.getText().length();
         return token;
     }
 }
