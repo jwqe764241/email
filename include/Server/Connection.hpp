@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "asio.hpp"
+#include "asio/ssl.hpp"
 
 #include "ConnectionContext.hpp"
 #include "Smtp/SmtpParser.hpp"

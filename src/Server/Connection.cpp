@@ -20,7 +20,7 @@ std::shared_ptr<Connection> Connection::getPtr()
 
 void Connection::sendGreeting()
 {
-    context.getSocket().async_write_some(
+    context.getStream().async_write_some(
         asio::buffer("220 hello\n"),
         std::bind(&Connection::handleSendGreeting, this, std::placeholders::_1, std::placeholders::_2));
 }
@@ -35,8 +35,8 @@ void Connection::handleSendGreeting(const asio::error_code ec, int bytesTransfer
 
 void Connection::readRequest()
 {
-    asio::async_read_until(
-        context.getSocket(), context.getBuffer(), "\r\n",
+    context.getStream().async_read_until(
+        context.getBuffer(), "\r\n",
         std::bind(&Connection::handleReadRequest, this, std::placeholders::_1, std::placeholders::_2));
 }
 
@@ -52,7 +52,7 @@ void Connection::handleReadRequest(const asio::error_code ec, int bytesTransferr
 
         if (!command)
         {
-            context.getSocket().write_some(asio::buffer("500 Syntax error or Command unrecognized\r\n"));
+            context.getStream().write_some(asio::buffer("500 Syntax error or Command unrecognized\r\n"));
             readRequest();
             return;
         }

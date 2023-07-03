@@ -3,6 +3,7 @@ set(SOURCES
   Server/Server.cpp 
   Server/Connection.cpp 
   Server/ConnectionContext.cpp
+  Server/SecuredStream.cpp
   Smtp/SmtpParser.cpp
   Smtp/TokenReader.cpp
   Smtp/Token.cpp
@@ -14,6 +15,7 @@ set(SOURCES
   Smtp/QuitCommand.cpp
   Smtp/NoopCommand.cpp
   Smtp/RsetCommand.cpp
+  Smtp/StartTlsCommand.cpp
   State/StateMachine.cpp
   State/StateTransition.cpp
   State/State.cpp
@@ -25,9 +27,14 @@ add_definitions(-DASIO_STANDALONE)
 
 add_executable(email ${SOURCES})
 
+target_link_libraries(email ssl crypto)
+
 if(WIN32)
   target_link_libraries(email wsock32 ws2_32)
 endif()
+
+
+
 
 #libraries for tests
 add_library(TokenReader STATIC 
@@ -35,6 +42,7 @@ add_library(TokenReader STATIC
   Smtp/Token.cpp)
 
 add_library(SmtpParser STATIC 
+  Server/SecuredStream.cpp
   Smtp/SmtpParser.cpp 
   Smtp/TokenReader.cpp 
   Smtp/Token.cpp 
@@ -46,4 +54,5 @@ add_library(SmtpParser STATIC
   Smtp/QuitCommand.cpp
   Smtp/NoopCommand.cpp
   Smtp/RsetCommand.cpp
+  Smtp/StartTlsCommand.cpp
   Server/ConnectionContext.cpp)

@@ -12,6 +12,7 @@
 #include "RcptCommand.hpp"
 #include "RsetCommand.hpp"
 #include "SmtpCommand.hpp"
+#include "StartTlsCommand.hpp"
 #include "TokenReader.hpp"
 
 class SmtpParser
@@ -29,6 +30,7 @@ private:
     std::shared_ptr<QuitCommand> parseQuit(const std::string& str);
     std::shared_ptr<NoopCommand> parseNoop(const std::string& str);
     std::shared_ptr<RsetCommand> parseRset(const std::string& str);
+    std::shared_ptr<StartTlsCommand> parseStartTls(const std::string& str);
     bool tryReadDomain(TokenReader& reader);
     bool tryReadSubDomain(TokenReader& reader);
     bool tryReadMail(TokenReader& reader);

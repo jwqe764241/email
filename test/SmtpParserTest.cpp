@@ -65,3 +65,11 @@ TEST_CASE("Smtp parser can parse Rset command")
     REQUIRE(command != nullptr);
     REQUIRE(command->getCommandId() == SmtpCommandId::Rset);
 }
+
+TEST_CASE("Smtp parser can parse StartTls command")
+{
+    SmtpParser parser;
+    std::shared_ptr<SmtpCommand> command = parser.parse("STARTTLS");
+    REQUIRE(command != nullptr);
+    REQUIRE(command->getCommandId() == SmtpCommandId::StartTls);
+}

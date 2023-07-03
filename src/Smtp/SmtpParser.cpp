@@ -52,6 +52,12 @@ std::shared_ptr<SmtpCommand> SmtpParser::parse(const std::string& str)
         return parsedCommand;
     }
 
+    parsedCommand = parseStartTls(str);
+    if (parsedCommand)
+    {
+        return parsedCommand;
+    }
+
     return nullptr;
 }
 
@@ -199,6 +205,19 @@ std::shared_ptr<RsetCommand> SmtpParser::parseRset(const std::string& str)
     }
 
     return std::make_shared<RsetCommand>();
+}
+
+std::shared_ptr<StartTlsCommand> SmtpParser::parseStartTls(const std::string& str)
+{
+    TokenReader reader(str);
+
+    Token command = reader.take();
+    if (command.getText() != "STARTTLS")
+    {
+        return nullptr;
+    }
+
+    return std::make_shared<StartTlsCommand>();
 }
 
 bool SmtpParser::tryReadDomain(TokenReader& reader)

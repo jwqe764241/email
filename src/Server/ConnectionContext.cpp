@@ -1,17 +1,14 @@
 #include "Server/ConnectionContext.hpp"
 
 ConnectionContext::ConnectionContext(asio::ip::tcp::socket sock)
-    : sock(std::move(sock))
+    : stream(std::move(sock))
 {}
 
-ConnectionContext::~ConnectionContext()
-{
-    sock.close();
-}
+ConnectionContext::~ConnectionContext() {}
 
-asio::ip::tcp::socket& ConnectionContext::getSocket()
+SecuredStream& ConnectionContext::getStream()
 {
-    return sock;
+    return stream;
 }
 
 asio::streambuf& ConnectionContext::getBuffer()

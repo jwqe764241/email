@@ -6,6 +6,7 @@
 #include <unordered_set>
 
 #include "asio.hpp"
+#include "asio/ssl.hpp"
 
 #include "Connection.hpp"
 
@@ -25,6 +26,5 @@ private:
     asio::io_context ctx;
     asio::ip::tcp::socket listenSocket;
     asio::ip::tcp::acceptor acceptor;
-
     std::unordered_set<std::shared_ptr<Connection>> connections;
 };

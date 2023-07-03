@@ -5,6 +5,9 @@
 #include <vector>
 
 #include "asio.hpp"
+#include "asio/ssl.hpp"
+
+#include "SecuredStream.hpp"
 
 class ConnectionContext
 {
@@ -12,7 +15,7 @@ public:
     ConnectionContext(asio::ip::tcp::socket sock);
     ~ConnectionContext();
 
-    asio::ip::tcp::socket& getSocket();
+    SecuredStream& getStream();
     asio::streambuf& getBuffer();
     void setOnDisconnect(std::function<void()> onDisconnect);
     void disconnect();
@@ -27,7 +30,7 @@ public:
     void reset();
 
 private:
-    asio::ip::tcp::socket sock;
+    SecuredStream stream;
     asio::streambuf buffer;
     std::function<void()> onDisconnect;
     std::string domain;
