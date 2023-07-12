@@ -5,8 +5,6 @@ set(SOURCES
   Server/ConnectionContext.cpp
   Server/SecuredStream.cpp
   Smtp/SmtpParser.cpp
-  Smtp/TokenReader.cpp
-  Smtp/Token.cpp
   Smtp/HeloCommand.cpp
   Smtp/EhloCommand.cpp
   Smtp/MailCommand.cpp
@@ -37,15 +35,9 @@ endif()
 
 
 #libraries for tests
-add_library(TokenReader STATIC 
-  Smtp/TokenReader.cpp 
-  Smtp/Token.cpp)
-
 add_library(SmtpParser STATIC 
   Server/SecuredStream.cpp
   Smtp/SmtpParser.cpp 
-  Smtp/TokenReader.cpp 
-  Smtp/Token.cpp 
   Smtp/HeloCommand.cpp
   Smtp/EhloCommand.cpp
   Smtp/MailCommand.cpp

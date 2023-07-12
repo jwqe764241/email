@@ -1,303 +1,154 @@
 #include "Smtp/SmtpParser.hpp"
 
-std::shared_ptr<SmtpCommand> SmtpParser::parse(const std::string& str)
+bool equalsIgnoreCase(const std::string& str1, const std::string& str2)
 {
-    std::shared_ptr<SmtpCommand> parsedCommand = nullptr;
-
-    parsedCommand = parseHelo(str);
-    if (parsedCommand)
-    {
-        return parsedCommand;
-    }
-
-    parsedCommand = parseEhlo(str);
-    if (parsedCommand)
-    {
-        return parsedCommand;
-    }
-
-    parsedCommand = parseMail(str);
-    if (parsedCommand)
-    {
-        return parsedCommand;
-    }
-
-    parsedCommand = parseRcpt(str);
-    if (parsedCommand)
-    {
-        return parsedCommand;
-    }
-
-    parsedCommand = parseData(str);
-    if (parsedCommand)
-    {
-        return parsedCommand;
-    }
-
-    parsedCommand = parseQuit(str);
-    if (parsedCommand)
-    {
-        return parsedCommand;
-    }
-
-    parsedCommand = parseNoop(str);
-    if (parsedCommand)
-    {
-        return parsedCommand;
-    }
-
-    parsedCommand = parseRset(str);
-    if (parsedCommand)
-    {
-        return parsedCommand;
-    }
-
-    parsedCommand = parseStartTls(str);
-    if (parsedCommand)
-    {
-        return parsedCommand;
-    }
-
-    return nullptr;
+    return std::equal(str1.begin(), str1.end(), str2.begin(), str2.end(),
+                      [](const char& c1, const char& c2) { return tolower(c1) == tolower(c2); });
 }
 
-std::shared_ptr<HeloCommand> SmtpParser::parseHelo(const std::string& str)
+size_t findIgnoreCase(const std::string& str, const std::string& subStr)
 {
-    TokenReader reader(str);
-
-    Token command = reader.take();
-    if (command.getText() != "HELO")
-    {
-        return nullptr;
-    }
-
-    reader.skip(TokenKind::Space);
-
-    std::string domain;
-    bool result = reader.tryRead(std::bind(&SmtpParser::tryReadDomain, this, std::placeholders::_1), &domain);
-
-    return result ? std::make_shared<HeloCommand>(domain) : nullptr;
+    auto it = std::search(str.begin(), str.end(), subStr.begin(), subStr.end(),
+                          [](const char& c1, const char& c2) { return tolower(c1) == tolower(c2); });
+    return it != str.end() ? it - str.begin() : std::string::npos;
 }
 
-std::shared_ptr<EhloCommand> SmtpParser::parseEhlo(const std::string& str)
+void trimLineBreak(std::string& str)
 {
-    TokenReader reader(str);
-
-    Token command = reader.take();
-    if (command.getText() != "EHLO")
+    auto it = std::find(str.begin(), str.end(), '\r');
+    if (it != str.end())
     {
-        return nullptr;
+        str.erase(it, str.end());
     }
-
-    reader.skip(TokenKind::Space);
-
-    std::string domain;
-    bool result = reader.tryRead(std::bind(&SmtpParser::tryReadDomain, this, std::placeholders::_1), &domain);
-
-    return result ? std::make_shared<EhloCommand>(domain) : nullptr;
 }
 
-std::shared_ptr<MailCommand> SmtpParser::parseMail(const std::string& str)
+void splitSmtpRequest(const std::string& request, std::string* outCommand, std::string* outArg)
 {
-    TokenReader reader(str);
-
-    Token command = reader.take();
-    if (command.getText() != "MAIL")
+    auto whitespacePos = request.find_first_of(' ');
+    if (whitespacePos != std::string::npos)
     {
-        return nullptr;
+        *outCommand = request.substr(0, whitespacePos);
+        *outArg = request.substr(whitespacePos + 1);
     }
-
-    reader.skip(TokenKind::Space);
-
-    if (reader.take().getText() != "FROM" || reader.take().getKind() != TokenKind::Colon)
+    else
     {
-        return nullptr;
+        *outCommand = request;
     }
-
-    Token lessThan = reader.take();
-    if (lessThan.getKind() != TokenKind::LessThan)
-    {
-        return nullptr;
-    }
-
-    std::string originator;
-    bool result = reader.tryRead(std::bind(&SmtpParser::tryReadMail, this, std::placeholders::_1), &originator);
-
-    return result ? std::make_shared<MailCommand>(originator) : nullptr;
 }
 
-std::shared_ptr<RcptCommand> SmtpParser::parseRcpt(const std::string& str)
+bool isValidDomain(const std::string& domain)
 {
-    TokenReader reader(str);
-
-    Token command = reader.take();
-    if (command.getText() != "RCPT")
-    {
-        return nullptr;
-    }
-
-    reader.skip(TokenKind::Space);
-
-    if (reader.take().getText() != "TO" || reader.take().getKind() != TokenKind::Colon)
-    {
-        return nullptr;
-    }
-
-    Token lessThan = reader.take();
-    if (lessThan.getKind() != TokenKind::LessThan)
-    {
-        return nullptr;
-    }
-
-    std::string recipient;
-    bool result = reader.tryRead(std::bind(&SmtpParser::tryReadMail, this, std::placeholders::_1), &recipient);
-
-    return result ? std::make_shared<RcptCommand>(recipient) : nullptr;
+    std::regex re("(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]");
+    return std::regex_match(domain, re);
 }
 
-std::shared_ptr<DataCommand> SmtpParser::parseData(const std::string& str)
+bool isValidAddress(const std::string& address)
 {
-    TokenReader reader(str);
-
-    Token command = reader.take();
-    if (command.getText() != "DATA")
-    {
-        return nullptr;
-    }
-
-    return std::make_shared<DataCommand>();
+    std::regex re("[a-z0-9]+@(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]");
+    return std::regex_match(address, re);
 }
 
-std::shared_ptr<QuitCommand> SmtpParser::parseQuit(const std::string& str)
+std::string getStringBetween(const std::string& str, const std::string& start, const std::string& end)
 {
-    TokenReader reader(str);
-
-    Token command = reader.take();
-    if (command.getText() != "QUIT")
+    size_t startPos = findIgnoreCase(str, start);
+    if (startPos == std::string::npos || startPos != 0)
     {
-        return nullptr;
+        throw std::runtime_error("Invalid argument form.");
     }
 
-    return std::make_shared<QuitCommand>();
+    size_t endPos = findIgnoreCase(str, end);
+    if (endPos == std::string::npos || endPos < startPos)
+    {
+        throw std::runtime_error("Invalid argument form.");
+    }
+
+    return str.substr(start.size(), endPos - start.size());
 }
 
-std::shared_ptr<NoopCommand> SmtpParser::parseNoop(const std::string& str)
+std::string parseMailArgument(std::string& argument)
 {
-    TokenReader reader(str);
+    std::string address = getStringBetween(argument, "FROM:<", ">");
 
-    Token command = reader.take();
-    if (command.getText() != "NOOP")
+    if (!isValidAddress(address))
     {
-        return nullptr;
+        throw std::runtime_error("Invalid address.");
     }
 
-    return std::make_shared<NoopCommand>();
+    return address;
 }
 
-std::shared_ptr<RsetCommand> SmtpParser::parseRset(const std::string& str)
+std::string parseRcptArgument(std::string& argument)
 {
-    TokenReader reader(str);
+    std::string address = getStringBetween(argument, "TO:<", ">");
 
-    Token command = reader.take();
-    if (command.getText() != "RSET")
+    if (!isValidAddress(address))
     {
-        return nullptr;
+        throw std::runtime_error("Invalid address.");
     }
 
-    return std::make_shared<RsetCommand>();
+    return address;
 }
 
-std::shared_ptr<StartTlsCommand> SmtpParser::parseStartTls(const std::string& str)
+std::shared_ptr<SmtpCommand> parseSmtpCommand(std::string request)
 {
-    TokenReader reader(str);
+    trimLineBreak(request);
 
-    Token command = reader.take();
-    if (command.getText() != "STARTTLS")
+    if (request.empty())
     {
-        return nullptr;
+        throw std::runtime_error("The request is empty.");
     }
 
-    return std::make_shared<StartTlsCommand>();
-}
+    std::string command, argument;
+    splitSmtpRequest(request, &command, &argument);
 
-bool SmtpParser::tryReadDomain(TokenReader& reader)
-{
-    // read first subdomain
-    if (!tryReadSubDomain(reader))
+    if (equalsIgnoreCase(command, "HELO"))
     {
-        return false;
-    }
-
-    while (reader.peek().getKind() == TokenKind::Period)
-    {
-        reader.take();
-
-        if (!tryReadSubDomain(reader))
+        if (!isValidDomain(argument))
         {
-            return false;
+            throw std::runtime_error("Invalid HELO arguments.");
         }
+        return std::make_shared<HeloCommand>(argument);
     }
-
-    return true;
-}
-
-bool SmtpParser::tryReadSubDomain(TokenReader& reader)
-{
-    // check first is alphanumeric
-    if (tryReadAlphanumeric(reader) == false)
+    else if (equalsIgnoreCase(command, "EHLO"))
     {
-        return false;
-    }
-
-    reader.skip([](TokenKind tokenKind) {
-        return tokenKind == TokenKind::Text || tokenKind == TokenKind::Number || tokenKind == TokenKind::Hyphen;
-    });
-
-    return true;
-}
-
-bool SmtpParser::tryReadMail(TokenReader& reader)
-{
-    // parse username
-    if (tryReadAlphanumeric(reader) == false)
-    {
-        return false;
-    }
-
-    reader.skip([](TokenKind tokenKind) { return tokenKind == TokenKind::Text || tokenKind == TokenKind::Number; });
-
-    // check at
-    if (reader.take().getKind() != TokenKind::At)
-    {
-        return false;
-    }
-
-    // parse host part
-    if (!tryReadSubDomain(reader))
-    {
-        return false;
-    }
-
-    while (reader.peek().getKind() == TokenKind::Period)
-    {
-        reader.take();
-
-        if (!tryReadSubDomain(reader))
+        if (!isValidDomain(argument))
         {
-            return false;
+            throw std::runtime_error("Invalid EHLO arguments.");
         }
+        return std::make_shared<EhloCommand>(argument);
     }
-
-    return true;
-}
-
-bool SmtpParser::tryReadAlphanumeric(TokenReader& reader)
-{
-    TokenKind tokenKind = reader.peek().getKind();
-    if (tokenKind == TokenKind::Text || tokenKind == TokenKind::Number)
+    else if (equalsIgnoreCase(command, "MAIL"))
     {
-        reader.take();
-        return true;
+        std::string originator = parseMailArgument(argument);
+        return std::make_shared<MailCommand>(originator);
     }
-    return false;
+    else if (equalsIgnoreCase(command, "RCPT"))
+    {
+        std::string recipient = parseRcptArgument(argument);
+        return std::make_shared<RcptCommand>(recipient);
+    }
+    else if (equalsIgnoreCase(command, "DATA"))
+    {
+        return std::make_shared<DataCommand>();
+    }
+    else if (equalsIgnoreCase(command, "NOOP"))
+    {
+        return std::make_shared<NoopCommand>();
+    }
+    else if (equalsIgnoreCase(command, "QUIT"))
+    {
+        return std::make_shared<QuitCommand>();
+    }
+    else if (equalsIgnoreCase(command, "RSET"))
+    {
+        return std::make_shared<RsetCommand>();
+    }
+    else if (equalsIgnoreCase(command, "STARTTLS"))
+    {
+        return std::make_shared<StartTlsCommand>();
+    }
+    else
+    {
+        throw std::runtime_error("Unknown smtp command.");
+    }
 }

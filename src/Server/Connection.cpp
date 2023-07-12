@@ -47,8 +47,7 @@ void Connection::handleReadRequest(const asio::error_code ec, int bytesTransferr
         std::stringstream sstream;
         sstream << std::istream(&context.getBuffer()).rdbuf();
         std::string rawRequest = sstream.str();
-        SmtpParser parser;
-        std::shared_ptr<SmtpCommand> command = parser.parse(rawRequest);
+        std::shared_ptr<SmtpCommand> command = parseSmtpCommand(rawRequest);
 
         if (!command)
         {
