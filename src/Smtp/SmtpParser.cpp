@@ -24,6 +24,11 @@ void trimLineBreak(std::string& str)
 
 void splitSmtpRequest(const std::string& request, std::string* outCommand, std::string* outArg)
 {
+    if (outCommand == nullptr || outArg == nullptr)
+    {
+        return;
+    }
+
     auto whitespacePos = request.find_first_of(' ');
     if (whitespacePos != std::string::npos)
     {
@@ -36,16 +41,21 @@ void splitSmtpRequest(const std::string& request, std::string* outCommand, std::
     }
 }
 
+bool isPatternMatched(const std::string& pattern, const std::string& str)
+{
+    std::regex re(pattern);
+    return std::regex_match(str, re);
+}
+
 bool isValidDomain(const std::string& domain)
 {
-    std::regex re("(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]");
-    return std::regex_match(domain, re);
+    return isPatternMatched("(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]", domain);
 }
 
 bool isValidAddress(const std::string& address)
 {
-    std::regex re("[a-z0-9]+@(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]");
-    return std::regex_match(address, re);
+    return isPatternMatched("[a-z0-9]+@(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]",
+                            address);
 }
 
 std::string getStringBetween(const std::string& str, const std::string& start, const std::string& end)
@@ -53,13 +63,13 @@ std::string getStringBetween(const std::string& str, const std::string& start, c
     size_t startPos = findIgnoreCase(str, start);
     if (startPos == std::string::npos || startPos != 0)
     {
-        throw std::runtime_error("Invalid argument form.");
+        return "";
     }
 
     size_t endPos = findIgnoreCase(str, end);
     if (endPos == std::string::npos || endPos < startPos)
     {
-        throw std::runtime_error("Invalid argument form.");
+        return "";
     }
 
     return str.substr(start.size(), endPos - start.size());
@@ -69,9 +79,9 @@ std::string parseMailArgument(std::string& argument)
 {
     std::string address = getStringBetween(argument, "FROM:<", ">");
 
-    if (!isValidAddress(address))
+    if (address.empty() || !isValidAddress(address))
     {
-        throw std::runtime_error("Invalid address.");
+        return "";
     }
 
     return address;
@@ -81,9 +91,9 @@ std::string parseRcptArgument(std::string& argument)
 {
     std::string address = getStringBetween(argument, "TO:<", ">");
 
-    if (!isValidAddress(address))
+    if (address.empty() || !isValidAddress(address))
     {
-        throw std::runtime_error("Invalid address.");
+        return "";
     }
 
     return address;
@@ -95,7 +105,7 @@ std::shared_ptr<SmtpCommand> parseSmtpCommand(std::string request)
 
     if (request.empty())
     {
-        throw std::runtime_error("The request is empty.");
+        return nullptr;
     }
 
     std::string command, argument;
@@ -105,7 +115,7 @@ std::shared_ptr<SmtpCommand> parseSmtpCommand(std::string request)
     {
         if (!isValidDomain(argument))
         {
-            throw std::runtime_error("Invalid HELO arguments.");
+            return nullptr;
         }
         return std::make_shared<HeloCommand>(argument);
     }
@@ -113,18 +123,26 @@ std::shared_ptr<SmtpCommand> parseSmtpCommand(std::string request)
     {
         if (!isValidDomain(argument))
         {
-            throw std::runtime_error("Invalid EHLO arguments.");
+            return nullptr;
         }
         return std::make_shared<EhloCommand>(argument);
     }
     else if (equalsIgnoreCase(command, "MAIL"))
     {
         std::string originator = parseMailArgument(argument);
+        if (originator.empty())
+        {
+            return nullptr;
+        }
         return std::make_shared<MailCommand>(originator);
     }
     else if (equalsIgnoreCase(command, "RCPT"))
     {
         std::string recipient = parseRcptArgument(argument);
+        if (recipient.empty())
+        {
+            return nullptr;
+        }
         return std::make_shared<RcptCommand>(recipient);
     }
     else if (equalsIgnoreCase(command, "DATA"))
@@ -149,6 +167,6 @@ std::shared_ptr<SmtpCommand> parseSmtpCommand(std::string request)
     }
     else
     {
-        throw std::runtime_error("Unknown smtp command.");
+        return nullptr;
     }
 }
