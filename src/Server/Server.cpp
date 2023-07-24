@@ -3,13 +3,16 @@
 Server::Server()
     : listenSocket(ctx)
     , acceptor(ctx)
-{}
+    , sslCtx(asio::ssl::context::tlsv12)
+{
+    sslCtx.use_certificate_chain_file("standardkim.com.pem");
+    sslCtx.use_private_key_file("standardkim.com.pem", asio::ssl::context::pem);
+}
 
 void Server::start(std::string host, std::string port)
 {
     asio::ip::tcp::resolver resolver(ctx);
     asio::ip::tcp::endpoint endpoint = *resolver.resolve(host, port);
-
     acceptor.open(endpoint.protocol());
     // TODO: Add error handling when address already use
     acceptor.bind(endpoint);
@@ -24,7 +27,8 @@ void Server::start(std::string host, std::string port)
 
 void Server::handleAccept(const asio::error_code& ec)
 {
-    auto connection = std::make_shared<Connection>(std::move(listenSocket));
+    SecuredStream securedStream(std::move(listenSocket), sslCtx);
+    auto connection = std::make_shared<Connection>(std::move(securedStream));
     connections.insert(connection);
     connection->start(std::bind(&Server::removeConnection, this, std::weak_ptr<Connection>(connection)));
 

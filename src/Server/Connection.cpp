@@ -1,7 +1,7 @@
 #include "Server/Connection.hpp"
 
-Connection::Connection(asio::ip::tcp::socket sock)
-    : context(std::move(sock))
+Connection::Connection(SecuredStream stream)
+    : context(std::move(stream))
     , stateMachine(context, StateTable::getInstance())
 {}
 
@@ -20,9 +20,8 @@ std::shared_ptr<Connection> Connection::getPtr()
 
 void Connection::sendGreeting()
 {
-    context.getStream().async_write_some(
-        asio::buffer("220 hello\n"),
-        std::bind(&Connection::handleSendGreeting, this, std::placeholders::_1, std::placeholders::_2));
+    context.getStream().writeAsync("220 hello\r\n", std::bind(&Connection::handleSendGreeting, this,
+                                                              std::placeholders::_1, std::placeholders::_2));
 }
 
 void Connection::handleSendGreeting(const asio::error_code ec, int bytesTransferred)
@@ -35,7 +34,8 @@ void Connection::handleSendGreeting(const asio::error_code ec, int bytesTransfer
 
 void Connection::readRequest()
 {
-    context.getStream().async_read_until(
+
+    context.getStream().readUntilAsync(
         context.getBuffer(), "\r\n",
         std::bind(&Connection::handleReadRequest, this, std::placeholders::_1, std::placeholders::_2));
 }
@@ -44,14 +44,14 @@ void Connection::handleReadRequest(const asio::error_code ec, int bytesTransferr
 {
     if (!ec)
     {
-        std::stringstream sstream;
-        sstream << std::istream(&context.getBuffer()).rdbuf();
-        std::string rawRequest = sstream.str();
-        std::shared_ptr<SmtpCommand> command = parseSmtpCommand(rawRequest);
+        std::string request;
+        std::istream is(&context.getBuffer());
+        std::getline(is, request);
+        std::shared_ptr<SmtpCommand> command = parseSmtpCommand(request);
 
         if (!command)
         {
-            context.getStream().write_some(asio::buffer("500 Syntax error or Command unrecognized\r\n"));
+            context.getStream().write("500 Syntax error or Command unrecognized\r\n");
             readRequest();
             return;
         }

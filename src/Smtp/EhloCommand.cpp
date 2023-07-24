@@ -12,5 +12,5 @@ SmtpCommandId EhloCommand::getCommandId()
 void EhloCommand::execute(ConnectionContext& context, std::function<void(const asio::error_code, int)> handler)
 {
     context.setDomain(domain);
-    context.getStream().async_write_some(asio::buffer("250-" + domain + "\r\n250 STARTTLS\r\n"), handler);
+    context.getStream().writeAsync("250-" + domain + "\r\n250 STARTTLS\r\n", handler);
 }

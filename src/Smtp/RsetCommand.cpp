@@ -8,5 +8,5 @@ SmtpCommandId RsetCommand::getCommandId()
 void RsetCommand::execute(ConnectionContext& context, std::function<void(const asio::error_code, int)> handler)
 {
     context.reset();
-    context.getStream().async_write_some(asio::buffer("250 OK\r\n"), handler);
+    context.getStream().writeAsync("250 OK\r\n", handler);
 }

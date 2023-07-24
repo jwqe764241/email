@@ -17,7 +17,7 @@
 class Connection : public std::enable_shared_from_this<Connection>
 {
 public:
-    Connection(asio::ip::tcp::socket sock);
+    Connection(SecuredStream stream);
     ~Connection();
 
     void start(std::function<void()> onDisconnect);

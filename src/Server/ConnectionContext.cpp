@@ -1,7 +1,7 @@
 #include "Server/ConnectionContext.hpp"
 
-ConnectionContext::ConnectionContext(asio::ip::tcp::socket sock)
-    : stream(std::move(sock))
+ConnectionContext::ConnectionContext(SecuredStream stream)
+    : stream(std::move(stream))
 {}
 
 ConnectionContext::~ConnectionContext() {}

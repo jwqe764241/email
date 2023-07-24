@@ -8,9 +8,9 @@ SmtpCommandId StartTlsCommand::getCommandId()
 void StartTlsCommand::execute(ConnectionContext& context, std::function<void(const asio::error_code, int)> handler)
 {
     this->handler = handler;
-    context.getStream().async_write_some(asio::buffer("220 ready\r\n"),
-                                         std::bind(&StartTlsCommand::handleSendReady, this, std::ref(context),
-                                                   std::placeholders::_1, std::placeholders::_2));
+    context.getStream().writeAsync("220 ready\r\n",
+                                   std::bind(&StartTlsCommand::handleSendReady, this, std::ref(context),
+                                             std::placeholders::_1, std::placeholders::_2));
 }
 
 void StartTlsCommand::handleSendReady(ConnectionContext& context, const asio::error_code& ec, int bytesTransffered)

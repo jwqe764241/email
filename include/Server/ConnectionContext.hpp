@@ -12,7 +12,7 @@
 class ConnectionContext
 {
 public:
-    ConnectionContext(asio::ip::tcp::socket sock);
+    ConnectionContext(SecuredStream stream);
     ~ConnectionContext();
 
     SecuredStream& getStream();

@@ -24,6 +24,7 @@ private:
     std::string host;
     int port;
     asio::io_context ctx;
+    asio::ssl::context sslCtx;
     asio::ip::tcp::socket listenSocket;
     asio::ip::tcp::acceptor acceptor;
     std::unordered_set<std::shared_ptr<Connection>> connections;

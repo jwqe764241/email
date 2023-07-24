@@ -1,62 +1,72 @@
 #include "Server/SecuredStream.hpp"
 
-SecuredStream::SecuredStream(asio::ip::tcp::socket sock)
-    : unsecuredStream(std::make_unique<asio::ip::tcp::socket>(std::move(sock)))
-    , securedStream(nullptr)
+SecuredStream::SecuredStream(asio::ip::tcp::socket sock, asio::ssl::context& ctx)
+    : stream(std::move(sock), ctx)
     , isSecured(false)
+{}
+
+SecuredStream::SecuredStream(SecuredStream&& securedStream)
+    : stream(std::move(securedStream.stream))
+    , isSecured(std::exchange(securedStream.isSecured, false))
 {}
 
 void SecuredStream::upgrade(std::function<void()> handler)
 {
-    asio::ssl::context sslCtx(asio::ssl::context::tlsv12);
-    sslCtx.use_certificate_chain_file("standardkim.com.pem");
-    sslCtx.use_private_key_file("standardkim.com.pem", asio::ssl::context::pem);
-    securedStream = std::make_unique<asio::ssl::stream<asio::ip::tcp::socket>>(std::move(*unsecuredStream), sslCtx);
-    unsecuredStream.reset(nullptr);
-    securedStream->async_handshake(asio::ssl::stream_base::handshake_type::server,
-                                   [this, handler](const asio::error_code& ec) {
-                                       if (!ec)
-                                       {
-                                           isSecured = true;
-                                           handler();
-                                       }
-                                   });
+    stream.async_handshake(asio::ssl::stream_base::handshake_type::server, [this, handler](const asio::error_code& ec) {
+        if (!ec)
+        {
+            isSecured = true;
+            handler();
+        }
+    });
 }
 
-void SecuredStream::async_read_until(asio::streambuf& buffer, std::string delim,
-                                     std::function<void(const asio::error_code&, int)> readToken)
+void SecuredStream::readUntilAsync(asio::streambuf& buffer, std::string delim,
+                                   std::function<void(const asio::error_code&, int)> readToken)
 {
     if (isSecured)
     {
-        asio::async_read_until(*securedStream, buffer, delim, readToken);
+        asio::async_read_until(stream, buffer, delim, readToken);
     }
     else
     {
-        asio::async_read_until(*unsecuredStream, buffer, delim, readToken);
+        asio::async_read_until(stream.next_layer(), buffer, delim, readToken);
     }
 }
 
-void SecuredStream::async_write_some(const asio::const_buffer& buffer,
-                                     std::function<void(const asio::error_code&, int)> writeToken)
+void SecuredStream::writeAsync(const std::string message, std::function<void(const asio::error_code&, int)> writeToken)
 {
+    asio::streambuf buffer;
+    writeToBuffer(message, buffer);
+
     if (isSecured)
     {
-        securedStream->async_write_some(buffer, writeToken);
+        asio::async_write(stream, buffer, writeToken);
     }
     else
     {
-        unsecuredStream->async_write_some(buffer, writeToken);
+        asio::async_write(stream.next_layer(), buffer, writeToken);
     }
 }
 
-void SecuredStream::write_some(const asio::const_buffer& buffer)
+void SecuredStream::write(const std::string message)
 {
+    asio::streambuf buffer;
+    writeToBuffer(message, buffer);
+
     if (isSecured)
     {
-        securedStream->write_some(buffer);
+        asio::write(stream, buffer);
     }
     else
     {
-        unsecuredStream->write_some(buffer);
+        asio::write(stream.next_layer(), buffer);
     }
+}
+
+void SecuredStream::writeToBuffer(const std::string& str, asio::streambuf& buffer)
+{
+    std::ostream os(&buffer);
+    std::ostream_iterator<char> osIt(os);
+    std::copy(str.begin(), str.end(), osIt);
 }
