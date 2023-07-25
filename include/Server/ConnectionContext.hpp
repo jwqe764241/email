@@ -12,7 +12,7 @@
 class ConnectionContext
 {
 public:
-    ConnectionContext(SecuredStream stream);
+    ConnectionContext(SecuredStream& stream);
     ~ConnectionContext();
 
     SecuredStream& getStream();
@@ -30,7 +30,7 @@ public:
     void reset();
 
 private:
-    SecuredStream stream;
+    SecuredStream& stream;
     asio::streambuf buffer;
     std::function<void()> onDisconnect;
     std::string domain;

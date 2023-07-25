@@ -1,7 +1,7 @@
 #include "Server/ConnectionContext.hpp"
 
-ConnectionContext::ConnectionContext(SecuredStream stream)
-    : stream(std::move(stream))
+ConnectionContext::ConnectionContext(SecuredStream& stream)
+    : stream(stream)
 {}
 
 ConnectionContext::~ConnectionContext() {}

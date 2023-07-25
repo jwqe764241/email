@@ -31,6 +31,7 @@ private:
     void handleExecuteCommand(std::shared_ptr<SmtpCommand> command, const asio::error_code ec, int bytesTransferred);
 
 private:
+    SecuredStream stream;
     ConnectionContext context;
     StateMachine stateMachine;
 };

@@ -1,7 +1,8 @@
 #include "Server/Connection.hpp"
 
 Connection::Connection(SecuredStream stream)
-    : context(std::move(stream))
+    : stream(std::move(stream))
+    , context(this->stream)
     , stateMachine(context, StateTable::getInstance())
 {}
 
