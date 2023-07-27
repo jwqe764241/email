@@ -8,21 +8,21 @@ Connection::Connection(SecuredStream stream)
 
 Connection::~Connection() {}
 
+std::shared_ptr<Connection> Connection::getPtr()
+{
+    return shared_from_this();
+}
+
 void Connection::start(std::function<void()> onDisconnect)
 {
     context.setOnDisconnect(onDisconnect);
     sendGreeting();
 }
 
-std::shared_ptr<Connection> Connection::getPtr()
-{
-    return shared_from_this();
-}
-
 void Connection::sendGreeting()
 {
-    context.getStream().writeAsync("220 hello\r\n", std::bind(&Connection::handleSendGreeting, this,
-                                                              std::placeholders::_1, std::placeholders::_2));
+    stream.writeAsync("220 hello\r\n",
+                      std::bind(&Connection::handleSendGreeting, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 void Connection::handleSendGreeting(const asio::error_code ec, int bytesTransferred)
@@ -35,8 +35,7 @@ void Connection::handleSendGreeting(const asio::error_code ec, int bytesTransfer
 
 void Connection::readRequest()
 {
-
-    context.getStream().readUntilAsync(
+    stream.readUntilAsync(
         context.getBuffer(), "\r\n",
         std::bind(&Connection::handleReadRequest, this, std::placeholders::_1, std::placeholders::_2));
 }
@@ -52,8 +51,15 @@ void Connection::handleReadRequest(const asio::error_code ec, int bytesTransferr
 
         if (!command)
         {
-            context.getStream().write("500 Syntax error or Command unrecognized\r\n");
-            readRequest();
+            auto self(shared_from_this());
+            stream.writeAsync("500 Syntax error or Command unrecognized\r\n",
+                              [this, self](const asio::error_code& ec, int bytesTransffered) {
+                                  if (!ec)
+                                  {
+
+                                      readRequest();
+                                  }
+                              });
             return;
         }
 
@@ -87,7 +93,6 @@ void Connection::handleReadRequest(const asio::error_code ec, int bytesTransferr
     }
 }
 
-// TODO:: rename this method
 void Connection::handleExecuteCommand(std::shared_ptr<SmtpCommand> command, const asio::error_code ec,
                                       int bytesTransferred)
 {
