@@ -15,5 +15,5 @@ State::State(const State& rhs)
 
 StateTransition& State::getTransition(SmtpCommandId smtpCommandId)
 {
-    return transitionMap[smtpCommandId];
+    return transitionMap.at(smtpCommandId);
 }

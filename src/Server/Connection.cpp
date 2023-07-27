@@ -57,7 +57,25 @@ void Connection::handleReadRequest(const asio::error_code ec, int bytesTransferr
             return;
         }
 
-        if (stateMachine.canAccept(command))
+        bool canAccept = false;
+        try
+        {
+            canAccept = stateMachine.canAccept(command);
+        }
+        catch (const std::out_of_range& e)
+        {
+            auto self(shared_from_this());
+            stream.writeAsync("503 Bad sequence of commands\r\n",
+                              [this, self](const asio::error_code& ec, int bytesTransffered) {
+                                  if (!ec)
+                                  {
+                                      readRequest();
+                                  }
+                              });
+            return;
+        }
+
+        if (canAccept)
         {
             command->execute(context, std::bind(&Connection::handleExecuteCommand, this, command, std::placeholders::_1,
                                                 std::placeholders::_2));

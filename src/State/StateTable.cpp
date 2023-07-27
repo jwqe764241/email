@@ -10,7 +10,7 @@ StateTable::StateTable(std::initializer_list<std::pair<StateId, State>> states)
 
 State& StateTable::getState(StateId stateId)
 {
-    return stateMap[stateId];
+    return stateMap.at(stateId);
 }
 
 StateTable& StateTable::getInstance()
