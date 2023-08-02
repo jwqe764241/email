@@ -1,5 +1,5 @@
 add_executable(SmtpParserTest SmtpParserTest.cpp)
-target_link_libraries(SmtpParserTest PRIVATE SmtpParser Catch2::Catch2 ssl crypto)
+target_link_libraries(SmtpParserTest SmtpParser Catch2::Catch2 ssl crypto)
 if(WIN32)
   target_link_libraries(SmtpParserTest wsock32 ws2_32)
 endif()
