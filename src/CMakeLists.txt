@@ -4,6 +4,7 @@ set(SOURCES
   Server/Connection.cpp 
   Server/ConnectionContext.cpp
   Server/SecuredStream.cpp
+  Server/ConfigParser.cpp
   Smtp/SmtpParser.cpp
   Smtp/HeloCommand.cpp
   Smtp/EhloCommand.cpp
@@ -26,13 +27,9 @@ add_definitions(-DASIO_STANDALONE)
 add_executable(email ${SOURCES})
 
 target_link_libraries(email ssl crypto)
-
 if(WIN32)
   target_link_libraries(email wsock32 ws2_32)
 endif()
-
-
-
 
 #libraries for tests
 add_library(SmtpParser STATIC 
