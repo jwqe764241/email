@@ -45,3 +45,6 @@ add_library(SmtpParser STATIC
   Smtp/RsetCommand.cpp
   Smtp/StartTlsCommand.cpp
   Server/ConnectionContext.cpp)
+
+add_library(ConfigParser STATIC
+  Server/ConfigParser.cpp)
