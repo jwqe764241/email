@@ -61,7 +61,7 @@ TEST_CASE("parseConfig ignores comment starts with #")
         PORT = 8080 # something blah blah
 
         # Certificate Config
-        CERT_PATH=./aaa.example.com.pem // path your .pem file
+        CERT_PATH=./aaa.example.com.pem # path your .pem file
     )";
     std::stringstream sstream(str);
 
