@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <map>
 #include <memory>
 #include <string>
 #include <unordered_set>
@@ -10,11 +11,24 @@
 
 #include "Connection.hpp"
 
+struct ServerConfig
+{
+    std::string host;
+    std::string port;
+    std::string certPemPath;
+
+    ServerConfig(const std::map<std::string, std::string>& map)
+        : host(map.at("HOST"))
+        , port(map.at("PORT"))
+        , certPemPath(map.at("CERT_PATH"))
+    {}
+};
+
 class Server
 {
 public:
-    Server();
-    void start(std::string host, std::string port);
+    Server(const ServerConfig& config);
+    void start();
 
 private:
     void handleAccept(const asio::error_code& ec);
@@ -22,7 +36,7 @@ private:
 
 private:
     std::string host;
-    int port;
+    std::string port;
     asio::io_context ctx;
     asio::ssl::context sslCtx;
     asio::ip::tcp::socket listenSocket;

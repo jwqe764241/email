@@ -1,15 +1,17 @@
 #include "Server/Server.hpp"
 
-Server::Server()
+Server::Server(const ServerConfig& config)
     : listenSocket(ctx)
     , acceptor(ctx)
     , sslCtx(asio::ssl::context::tlsv12)
+    , host(config.host)
+    , port(config.port)
 {
-    sslCtx.use_certificate_chain_file("standardkim.com.pem");
-    sslCtx.use_private_key_file("standardkim.com.pem", asio::ssl::context::pem);
+    sslCtx.use_certificate_chain_file(config.certPemPath);
+    sslCtx.use_private_key_file(config.certPemPath, asio::ssl::context::pem);
 }
 
-void Server::start(std::string host, std::string port)
+void Server::start()
 {
     asio::ip::tcp::resolver resolver(ctx);
     asio::ip::tcp::endpoint endpoint = *resolver.resolve(host, port);
