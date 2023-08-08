@@ -14,6 +14,15 @@ void removeWhitespace(std::string& str)
     }
 }
 
+void removeComment(std::string& str)
+{
+    auto commentIt = std::find(str.begin(), str.end(), '#');
+    if (commentIt != str.end())
+    {
+        str.erase(commentIt, str.end());
+    }
+}
+
 std::pair<std::string, std::string> parseLine(const std::string& line)
 {
     std::size_t separatorPos = line.find('=');
@@ -38,15 +47,14 @@ std::map<std::string, std::string> parseConfig(std::istream& source)
     {
         std::string str;
         std::getline(source, str);
-
+        removeComment(str);
         removeWhitespace(str);
         if (str.empty())
         {
             continue;
         }
 
-        std::pair<std::string, std::string> parsedConfig = parseLine(str);
-        configMap.insert(parsedConfig);
+        configMap.insert(parseLine(str));
     }
 
     return configMap;
