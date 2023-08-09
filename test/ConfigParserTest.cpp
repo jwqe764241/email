@@ -72,3 +72,11 @@ TEST_CASE("parseConfig ignores comment starts with #")
     REQUIRE(map["PORT"] == "8080");
     REQUIRE(map["CERT_PATH"] == "./aaa.example.com.pem");
 }
+
+TEST_CASE("parseConfig throws runtime_error when key is empty")
+{
+    std::string str = "  = 127.0.0.1";
+    std::stringstream sstream(str);
+
+    REQUIRE_THROWS_AS([&]() { parseConfig(sstream); }(), std::runtime_error);
+}

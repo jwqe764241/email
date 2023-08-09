@@ -31,7 +31,13 @@ std::pair<std::string, std::string> parseLine(const std::string& line)
         throw std::runtime_error("Invalid config form.");
     }
 
-    return std::make_pair(line.substr(0, separatorPos), line.substr(separatorPos + 1));
+    std::string key = line.substr(0, separatorPos);
+    if (key.empty())
+    {
+        throw std::runtime_error("Config name must not be empty.");
+    }
+
+    return std::make_pair(key, line.substr(separatorPos + 1));
 }
 } // namespace
 
