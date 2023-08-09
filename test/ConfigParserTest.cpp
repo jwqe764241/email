@@ -73,10 +73,32 @@ TEST_CASE("parseConfig ignores comment starts with #")
     REQUIRE(map["CERT_PATH"] == "./aaa.example.com.pem");
 }
 
-TEST_CASE("parseConfig throws runtime_error when key is empty")
+TEST_CASE("parseConfig throws runtime_error when failbit is set")
 {
-    std::string str = "  = 127.0.0.1";
-    std::stringstream sstream(str);
+    std::ifstream failBitIfs;
+    failBitIfs.setstate(failBitIfs.failbit);
+    std::ifstream badBitIfs;
+    badBitIfs.setstate(badBitIfs.badbit);
 
-    REQUIRE_THROWS_AS([&]() { parseConfig(sstream); }(), std::runtime_error);
+    REQUIRE_THROWS_AS([&]() { parseConfig(failBitIfs); }(), std::runtime_error);
+    REQUIRE_THROWS_AS([&]() { parseConfig(badBitIfs); }(), std::runtime_error);
+}
+
+TEST_CASE("parseConfig throws runtime_error when invalid config form")
+{
+    SECTION("Config key is empty")
+    {
+        std::string str = "  = 127.0.0.1";
+        std::stringstream sstream(str);
+
+        REQUIRE_THROWS_AS([&]() { parseConfig(sstream); }(), std::runtime_error);
+    }
+
+    SECTION("Wrong separator")
+    {
+        std::string str = "IP : 127.0.0.1";
+        std::stringstream sstream(str);
+
+        REQUIRE_THROWS_AS([&]() { parseConfig(sstream); }(), std::runtime_error);
+    }
 }
