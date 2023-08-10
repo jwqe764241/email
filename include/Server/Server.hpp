@@ -35,8 +35,7 @@ private:
     void removeConnection(std::weak_ptr<Connection> connectionRef);
 
 private:
-    std::string host;
-    std::string port;
+    const ServerConfig config;
     asio::io_context ctx;
     asio::ssl::context sslCtx;
     asio::ip::tcp::socket listenSocket;

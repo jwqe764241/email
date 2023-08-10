@@ -4,17 +4,16 @@ Server::Server(const ServerConfig& config)
     : listenSocket(ctx)
     , acceptor(ctx)
     , sslCtx(asio::ssl::context::tlsv12)
-    , host(config.host)
-    , port(config.port)
+    , config(config)
 {
-    sslCtx.use_certificate_chain_file(config.certPemPath);
-    sslCtx.use_private_key_file(config.certPemPath, asio::ssl::context::pem);
+    sslCtx.use_certificate_chain_file(this->config.certPemPath);
+    sslCtx.use_private_key_file(this->config.certPemPath, asio::ssl::context::pem);
 }
 
 void Server::start()
 {
     asio::ip::tcp::resolver resolver(ctx);
-    asio::ip::tcp::endpoint endpoint = *resolver.resolve(host, port);
+    asio::ip::tcp::endpoint endpoint = *resolver.resolve(config.host, config.port);
     acceptor.open(endpoint.protocol());
     // TODO: Add error handling when address already use
     acceptor.bind(endpoint);
