@@ -1,5 +1,7 @@
 #include "Smtp/SmtpParser.hpp"
 
+namespace
+{
 bool equalsIgnoreCase(const std::string& str1, const std::string& str2)
 {
     return std::equal(str1.begin(), str1.end(), str2.begin(), str2.end(),
@@ -98,6 +100,7 @@ std::string parseRcptArgument(std::string& argument)
 
     return address;
 }
+} // namespace
 
 std::shared_ptr<SmtpCommand> parseSmtpCommand(std::string request)
 {

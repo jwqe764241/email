@@ -17,8 +17,4 @@
 #include "SmtpCommand.hpp"
 #include "StartTlsCommand.hpp"
 
-std::string parseMailArgument(std::string& argument);
-
-std::string parseRcptArgument(std::string& argument);
-
 std::shared_ptr<SmtpCommand> parseSmtpCommand(std::string request);
