@@ -10,19 +10,7 @@
 #include "asio/ssl.hpp"
 
 #include "Connection.hpp"
-
-struct ServerConfig
-{
-    std::string host;
-    std::string port;
-    std::string certPemPath;
-
-    ServerConfig(const std::map<std::string, std::string>& map)
-        : host(map.at("HOST"))
-        , port(map.at("PORT"))
-        , certPemPath(map.at("CERT_PATH"))
-    {}
-};
+#include "ServerConfig.hpp"
 
 class Server
 {

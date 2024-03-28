@@ -1,10 +1,10 @@
 set(SOURCES 
   main.cpp 
   Server/Server.cpp 
+  Server/ServerConfig.cpp
   Server/Connection.cpp 
   Server/ConnectionContext.cpp
   Server/SecuredStream.cpp
-  Server/ConfigParser.cpp
   Smtp/SmtpParser.cpp
   Smtp/HeloCommand.cpp
   Smtp/EhloCommand.cpp
@@ -19,8 +19,6 @@ set(SOURCES
   State/StateTransition.cpp
   State/State.cpp
   State/StateTable.cpp)
-
-set(CMAKE_CXX_STANDARD 14)
 
 add_definitions(-DASIO_STANDALONE)
 
@@ -46,5 +44,5 @@ add_library(SmtpParser STATIC
   Smtp/StartTlsCommand.cpp
   Server/ConnectionContext.cpp)
 
-add_library(ConfigParser STATIC
-  Server/ConfigParser.cpp)
+add_library(ServerConfig STATIC
+  Server/ServerConfig.cpp)

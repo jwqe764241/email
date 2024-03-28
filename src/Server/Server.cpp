@@ -6,8 +6,8 @@ Server::Server(const ServerConfig& config)
     , sslCtx(asio::ssl::context::tlsv12)
     , config(config)
 {
-    sslCtx.use_certificate_chain_file(this->config.certPemPath);
-    sslCtx.use_private_key_file(this->config.certPemPath, asio::ssl::context::pem);
+    sslCtx.use_certificate_chain_file(this->config.certPath);
+    sslCtx.use_private_key_file(this->config.certPath, asio::ssl::context::pem);
 }
 
 void Server::start()
